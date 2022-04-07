@@ -1,0 +1,22 @@
+[
+  {
+    "namespace": "myapi",
+    "functions": [
+      {
+        "name": "hidelocalfolder",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "integer"
+          },
+          {
+            "name": "enforceRebuild",
+            "type": "boolean"
+          }
+        ]
+      }
+    ]
+  }
+]

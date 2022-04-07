@@ -22,6 +22,22 @@
         "menus",
         "notifications"
     ],
+    "experiment_apis": {
+        "myapi": {
+            "schema": "schema.json",
+            "parent": {
+                "scopes": [
+                    "addon_parent"
+                ],
+                "paths": [
+                    [
+                        "myapi"
+                    ]
+                ],
+                "script": "implementation.js"
+            }
+        }
+    },
     "background": {
         "page": "background.html"
     },

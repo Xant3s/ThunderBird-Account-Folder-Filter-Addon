@@ -1,65 +1,53 @@
-// A wrapper function returning an async iterator for a MessageList. Derived from
-// https://webextension-api.thunderbird.net/en/91/how-to/messageLists.html
-async function* iterateMessagePages(page) {
-    for (let message of page.messages) {
-        yield message;
+// function to hide the local folder in the given main window (if it is a normal main window)
+function hideLocalFolder(window, enforceRebuild) {
+    if (window.type != "normal")
+        return;
+
+    // hide local folders for the given window
+    messenger.myapi.hidelocalfolder(window.id, enforceRebuild);
+}
+
+
+
+// run thru all already opened main windows (type = normal) and hide local folders
+// this will take care of all windows already open while the add-on is being installed or
+// activated during the runtime of Thunderbird.
+async function init() {
+    let windows = await messenger.windows.getAll({windowTypes: ["normal"]});
+    for (let window of windows) {
+        hideLocalFolder(window, true);
     }
 
-    while (page.id) {
-        page = await messenger.messages.continueList(page.id);
-        for (let message of page.messages) {
-            yield message;
+    // register a event listener for newly opened windows, to
+    // automatically call hideLocalFolders() for them
+    messenger.windows.onCreated.addListener((window) => hideLocalFolder(window, false));
+}
+
+
+async function waitForLoad() {
+    let onCreate = new Promise(function(resolve, reject) {
+        function listener() {
+            browser.windows.onCreated.removeListener(listener);
+            resolve(true);
         }
+        browser.windows.onCreated.addListener(listener);
+    });
+
+    let windows = await browser.windows.getAll({windowTypes:["normal"]});
+    if (windows.length > 0) {
+        return false;
+    } else {
+        return onCreate;
     }
 }
 
-async function load() {
+// self-executing async "main" function
+(async () => {
+    await waitForLoad();
+    init();
+})()
 
 
 
-    // Add a listener for the onNewMailReceived events.
-    await messenger.messages.onNewMailReceived.addListener(async (folder, messages) => {
-        let { messageLog } = await messenger.storage.local.get({ messageLog: [] });
 
-        for await (let message of iterateMessagePages(messages)) {
-            messageLog.push({
-                folder: folder.name,
-                time: Date.now(),
-                message: message
-            })
-        }
 
-        await messenger.storage.local.set({ messageLog });
-    })
-
-    // Create the menu entries.
-    let menu_id = await messenger.menus.create({
-        title: "Show received email",
-        contexts: [
-            "browser_action",
-            "tools_menu"
-        ],
-    });
-    
-    // Register a listener for the menus.onClicked event.
-    await messenger.menus.onClicked.addListener(async (info, tab) => {
-        if (info.menuItemId == menu_id) {
-            // Our menu entry was clicked
-            let { messageLog } = await messenger.storage.local.get({ messageLog: [] });
-
-            let now = Date.now();
-            let last24h = messageLog.filter(e => (now - e.time) < 24 * 60 * 1000);
-
-            for (let entry of last24h) {
-                messenger.notifications.create({
-                    "type": "basic",
-                    "iconUrl": "images/internet.png",
-                    "title": `${entry.folder}: ${entry.message.author}`,
-                    "message": entry.message.subject
-                  });                
-            }
-        }
-    });
-}
-
-document.addEventListener("DOMContentLoaded", load);

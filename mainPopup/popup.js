@@ -29,6 +29,16 @@ const foo = async() => {
         console.log('   Unread messages inbox: ' + unreadMessagesInbox)
         console.log('   Unread messages total: ' + unreadMessagesTotal)
     }
+
+    // Testing
+
+    // modify folder pane for all windows of type normal
+    const windows = await messenger.windows.getAll()
+    console.log(windows)
+    const currentWindow = await messenger.windows.getCurrent()
+
+    // searchfox: registerFolderTreeMode
+
 }
 
 foo()
