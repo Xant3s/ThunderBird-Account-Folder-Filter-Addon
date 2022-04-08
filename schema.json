@@ -14,6 +14,10 @@
           {
             "name": "enforceRebuild",
             "type": "boolean"
+          },
+          {
+            "name": "accounts",
+            "type": "any"
           }
         ]
       }

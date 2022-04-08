@@ -13,7 +13,7 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
 
         return {
             myapi: {
-                async hidelocalfolder(windowId, enforceRebuild) {
+                async hidelocalfolder(windowId, enforceRebuild, accounts) {
                     if (!windowId)
                         return false;
 
@@ -23,8 +23,7 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                         return false;
 
                     function manipulate() {
-                        // console.log(this.window.gFolderTreeView._rowMap.empty())
-                        // this.window.gFolderTreeView.splice(0,this.window.gFolderTreeView.length)
+                        const originalRowMap = this.window.gFolderTreeView._rowMap
 
                         // Original
                         let localFolderID = 0
@@ -37,29 +36,55 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                         // this.window.gFolderTreeView._rowMap[0] = this.window.gFolderTreeView._rowMap[localFolderID]
                         ////! this.window.gFolderTreeView._rowMap[0]._folder.server.prettyName = 'Local Folders'
 
+                        let accountNames = []
+                        for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
+                            accountNames.push(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName)
+                            // console.log(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName)
+                        }
 
-                        // add another window above the folder pane to DOM, where user can select account.
+                        console.log('@@@@@@@@@')
+                        console.log(accounts)
+                        // let localFolderIndex = accounts.findIndex(account => account.name == "mail@samueltruman.com")
+                        // let unread = accounts[localFolderIndex].unreadMessagesTotal
+                        // console.log(unread)
+
+
+                        const folderPanelHeader = this.window.document.getElementById('folderPaneHeader')
+                        folderPanelHeader.firstChild.innerHTML = 'Select Account'
+                        const buttonContainer = this.window.document.createElement('div')
+                        folderPanelHeader.insertBefore(buttonContainer, folderPanelHeader.lastChild)
+
+                        // TODO: add another window above the folder pane to DOM, where user can select account.
                         // e.g. modify folder pane toolbar or replicate folder pane toolbar
-                        this.window.document.getElementById('folderPaneHeader').firstChild.innerHTML = 'Select Account'
-                        // const newLabel = this.window.document.createElement("Label")
-                        // newLabel.innerHTML = 'TEST 42'
-                        const testBtn = this.window.document.createElement('toolbarbutton')
-                        testBtn.setAttribute('label', 'testBtn')
-                        testBtn.setAttribute('style', 'flex-wrap: wrap;')
-                        testBtn.addEventListener('click', () => {
-                            console.log('testBtn clicked')
-                        })
-                        this.window.document.getElementById('folderPaneHeader').children[1].appendChild(testBtn)
+                        for(let accountName of accountNames) {
+                            let span = this.window.document.createElement('span')
+                            let accountBtn = this.window.document.createElement('button')
+                            // accountBtn.setAttribute('style', 'flex-wrap: wrap;')
+                            accountBtn.addEventListener('click', () => {
+                                console.log(`${accountName} clicked`)
+                            })
+                            folderPanelHeader.children[1].appendChild(accountBtn)
+                            let toolbarBtnText = this.window.document.createElement('label')
+                            console.log(accountName)
+                            let localFolderIndex = accounts.findIndex(account => account.name === accountName)
+                            let unread = accounts[localFolderIndex]?.unreadMessagesTotal
+                            console.log(unread)
+                            toolbarBtnText.innerHTML = `${accountName} (${unread})`
+                            // toolbarBtnText.innerHTML = `${accountName}`
+                            toolbarBtnText.classList.add('toolbarbutton-text')
+                            accountBtn.appendChild(toolbarBtnText)
+                            span.appendChild(accountBtn)
+                            buttonContainer.appendChild(span)
+                        }
 
 
-                        const toolbarBtnText = this.window.document.createElement('label')
-                        toolbarBtnText.innerHTML = 'testBtn'
-                        toolbarBtnText.classList.add('toolbarbutton-text')
-                        testBtn.appendChild(toolbarBtnText)
-                        // this.window.document.getElementById('folderPaneHeader').appendChild(newLabel)
-                        this.window.document.getElementById('folderPaneHeader').appendChild(testBtn)
 
-                        // splice all but one account
+
+                        // TODO: Show all button
+
+
+
+                        // TODO: splice all but one account
                         // console.log('------------')
                         // for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
                         //     console.log(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName)
@@ -68,23 +93,6 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                         //     }
                         // }
                         // console.log('@@@@@@@@@@@@@@')
-
-                        console.log('Hello world')
-                        console.log(this.window.gFolderTreeView._rowMap)
-                        console.log(this.window.gFolderTreeView._rowMap[1]._folder.abbreviatedName)
-                        console.log(this.window.gFolderTreeView._rowMap[2]._folder._children)
-
-                        // let properties = FolderUtils.getFolderProperties(this.window.gFolderTreeView._rowMap[0]._folder, false)
-                        // properties.
-
-
-
-
-                        // for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
-                        //     if(this.window.gFolderTreeView._rowMap[i]._folder?.hostname == 'Local Folders'){
-                        //         this.window.gFolderTreeView._rowMap.splice(i, 1);
-                        //     }
-                        // }
                     }
 
                     let callback = manipulate.bind(requestedWindow);

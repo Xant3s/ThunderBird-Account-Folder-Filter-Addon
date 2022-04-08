@@ -1,10 +1,46 @@
+const getNumberOfUnreadMailsRecursive = async (folder) => {
+    const hasChildFolders = folder.subFolders.length > 0
+    const folderInfo = await messenger.folders.getFolderInfo(folder)
+    if(hasChildFolders) {
+        let result = folderInfo.unreadMessageCount
+        for(const childFolder of folder.subFolders) {
+            result += await getNumberOfUnreadMailsRecursive(childFolder)
+        }
+        return result
+    } else {
+        return folderInfo.unreadMessageCount
+    }
+}
+
 // function to hide the local folder in the given main window (if it is a normal main window)
-function hideLocalFolder(window, enforceRebuild) {
+async function hideLocalFolder(window, enforceRebuild) {
     if (window.type != "normal")
         return;
 
+
+    let accounts = []
+    const accs = await messenger.accounts.list(true)
+    const folders = accs.map(acc => acc.folders)
+    for(let accountIndex = 0; accountIndex < accs.length; accountIndex++) {
+        const inbox = folders[accountIndex].filter(folder => folder.type == 'inbox')[0]
+        if(inbox === undefined) break
+        const inboxFolderInfo = await messenger.folders.getFolderInfo(inbox)
+        const unreadMessagesInbox = inboxFolderInfo.unreadMessageCount
+        let unreadMessagesTotal = 0
+
+        for(const folder of folders[accountIndex]) {
+            unreadMessagesTotal += await getNumberOfUnreadMailsRecursive(folder)
+        }
+        accounts.push({
+            name: accs[accountIndex].name,
+            unreadMessagesInbox: unreadMessagesInbox,
+            unreadMessagesTotal: unreadMessagesTotal
+        })
+    }
+
+
     // hide local folders for the given window
-    messenger.myapi.hidelocalfolder(window.id, enforceRebuild);
+    messenger.myapi.hidelocalfolder(window.id, enforceRebuild, accounts);
 }
 
 
