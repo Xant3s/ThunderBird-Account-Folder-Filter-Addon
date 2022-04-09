@@ -22,8 +22,8 @@ async function hideLocalFolder(window, enforceRebuild) {
     const accs = await messenger.accounts.list(true)
     const folders = accs.map(acc => acc.folders)
     for(let accountIndex = 0; accountIndex < accs.length; accountIndex++) {
-        const inbox = folders[accountIndex].filter(folder => folder.type == 'inbox')[0]
-        if(inbox === undefined) break
+        const inbox = folders[accountIndex].filter(folder => folder.type === 'inbox')[0]
+        if(inbox === undefined) continue
         const inboxFolderInfo = await messenger.folders.getFolderInfo(inbox)
         const unreadMessagesInbox = inboxFolderInfo.unreadMessageCount
         let unreadMessagesTotal = 0
