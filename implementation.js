@@ -37,11 +37,7 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                         // this.window.gFolderTreeView._rowMap[0] = this.window.gFolderTreeView._rowMap[localFolderID]
                         ////! this.window.gFolderTreeView._rowMap[0]._folder.server.prettyName = 'Local Folders'
 
-                        let accountNames = []
-                        for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
-                            accountNames.push(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName)
-                            // console.log(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName)
-                        }
+                        let accountNames = accounts.map(account => account.name)
 
                         console.log('@@@@@@@@@')
                         console.log(accounts)
