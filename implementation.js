@@ -54,6 +54,8 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                         folderPanelHeader.firstChild.innerHTML = 'Select Account'
                         const buttonContainer = this.window.document.createElement('div')
                         folderPanelHeader.insertBefore(buttonContainer, folderPanelHeader.lastChild)
+                        const breakLine = this.window.document.createElement('br')
+                        folderPanelHeader.insertBefore(breakLine, buttonContainer)
 
                         // TODO: add another window above the folder pane to DOM, where user can select account.
                         // e.g. modify folder pane toolbar or replicate folder pane toolbar
@@ -84,6 +86,8 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                             toolbarBtnText.classList.add('toolbarbutton-text')
                             accountBtn.appendChild(toolbarBtnText)
                             span.appendChild(accountBtn)
+                            let breakLine = this.window.document.createElement('br')
+                            span.appendChild(breakLine)
                             buttonContainer.appendChild(span)
                         }
 
