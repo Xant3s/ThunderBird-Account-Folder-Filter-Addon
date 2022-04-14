@@ -40,7 +40,10 @@ async function hideLocalFolder(window, enforceRebuild) {
 
 
     // hide local folders for the given window
-    messenger.myapi.hidelocalfolder(window.id, enforceRebuild, accounts);
+    let globalVar = {value: false}
+    console.log(globalVar.value)
+    // await messenger.myapi.hidelocalfolder(window.id, enforceRebuild, accounts, globalVar);
+    console.log(globalVar.value)
 }
 
 

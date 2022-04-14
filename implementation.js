@@ -13,39 +13,49 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
 
         return {
             myapi: {
-                async hidelocalfolder(windowId, enforceRebuild, accounts) {
+                async hidelocalfolder(windowId, enforceRebuild, accounts, globalVar) {
                     if (!windowId)
                         return false;
 
-                    //get the real window belonging to the WebExtebsion window ID
+                    //get the real window belonging to the WebExtension window ID
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window;
                     if (!requestedWindow)
                         return false;
 
+                    let originalRowMap
+                    let targetRowMap
+                    let firstTimeBuild = true
+
                     function manipulate() {
-                        const originalRowMap = this.window.gFolderTreeView._rowMap.slice()
+                        console.log('manipulate')
+                        globalVar.value = true
+
+                        // if(!firstTimeBuild) {
+                        //     console.log('rebuild')
+                        //     console.log(targetRowMap)
+                        //     console.log(originalRowMap)
+                        //     this.window.gFolderTreeView._rowMap = targetRowMap.splice()
+                        //     // return
+                        // } else {
+                        //     originalRowMap = this.window.gFolderTreeView._rowMap.slice()
+                        //     targetRowMap = originalRowMap.slice()
+                        //     firstTimeBuild = false
+                        // }
+
 
                         // Original
                         // let localFolderID = 0
-                        // for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
-                        //     if(this.window.gFolderTreeView._rowMap[i]._folder?.hostname == 'Local Folders'){
-                        //         localFolderID = i
-                        //         this.window.gFolderTreeView._rowMap.splice(i, 1);
-                        //     }
-                        // }
+                        for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
+                            if(this.window.gFolderTreeView._rowMap[i]._folder?.hostname == 'Local Folders'){
+                                // localFolderID = i
+                                this.window.gFolderTreeView._rowMap.splice(i, 1);
+                            }
+                        }
                         // this.window.gFolderTreeView._rowMap = originalRowMap.slice()
                         // this.window.gFolderTreeView._rowMap[0] = this.window.gFolderTreeView._rowMap[localFolderID]
                         ////! this.window.gFolderTreeView._rowMap[0]._folder.server.prettyName = 'Local Folders'
 
                         let accountNames = accounts.map(account => account.name)
-
-                        console.log('@@@@@@@@@')
-                        console.log(accounts)
-                        // let localFolderIndex = accounts.findIndex(account => account.name == "mail@samueltruman.com")
-                        // let unread = accounts[localFolderIndex].unreadMessagesTotal
-                        // console.log(unread)
-
-
                         const folderPanelHeader = this.window.document.getElementById('folderPaneHeader')
                         folderPanelHeader.firstChild.innerHTML = 'Select Account'
                         const buttonContainer = this.window.document.createElement('div')
@@ -53,16 +63,32 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                         const breakLine = this.window.document.createElement('br')
                         folderPanelHeader.insertBefore(breakLine, buttonContainer)
 
-                        // TODO: add another window above the folder pane to DOM, where user can select account.
-                        // e.g. modify folder pane toolbar or replicate folder pane toolbar
                         for(let accountName of accountNames) {
                             if(accountName === 'Local Folders') {
                                 continue
                             }
                             let span = this.window.document.createElement('span')
                             let accountBtn = this.window.document.createElement('button')
-                            // accountBtn.setAttribute('style', 'flex-wrap: wrap;')
                             accountBtn.addEventListener('click', () => {
+                                // targetRowMap = originalRowMap.slice()
+
+                                // for(let i = targetRowMap.length -1; i >= 0 ; i--){
+                                //     if(targetRowMap[i]._folder?.prettyName !== accountName){
+                                //         targetRowMap.splice(i, 1);
+                                //     }
+                                // }
+
+                                // for(let i = targetRowMap.length -1; i >= 0 ; i--){
+                                //     if(targetRowMap[i]._folder?.hostname == 'Local Folders'){
+                                //         targetRowMap.splice(i, 1);
+                                //     }
+                                // }
+
+                                // if (enforceRebuild) {
+                                //     requestedWindow.gFolderTreeView._rebuild();
+                                // }
+
+
                                 // Restore all
                                 // TODO: fix
                                 // this.window.gFolderTreeView._rowMap = originalRowMap.slice()
@@ -86,23 +112,6 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                             span.appendChild(breakLine)
                             buttonContainer.appendChild(span)
                         }
-
-
-
-
-                        // TODO: Show all button
-
-
-
-                        // TODO: splice all but one account
-                        // console.log('------------')
-                        // for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
-                        //     console.log(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName)
-                        //     if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== 'mail@samueltruman.com'){
-                        //         this.window.gFolderTreeView._rowMap.splice(i, 1);
-                        //     }
-                        // }
-                        // console.log('@@@@@@@@@@@@@@')
                     }
 
                     let callback = manipulate.bind(requestedWindow);
@@ -113,7 +122,6 @@ var myapi = class extends ExtensionCommon.ExtensionAPI {
                     if (enforceRebuild) {
                         requestedWindow.gFolderTreeView._rebuild();
                     }
-
                 }
             }
         };

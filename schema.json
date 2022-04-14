@@ -18,6 +18,10 @@
           {
             "name": "accounts",
             "type": "any"
+          },
+          {
+            "name": "globalVar",
+            "type": "any"
           }
         ]
       }
