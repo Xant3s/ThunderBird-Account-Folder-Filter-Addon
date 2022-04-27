@@ -76,15 +76,20 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             accountBtn.addEventListener('click', bar.bind(this))
                             buttonContainer.appendChild(accountBtn)
                         }
+
+                        async function foobar() {
+                            await api.showAll(windowId, true, accounts)
+                        }
+                        let showAllBtn = this.window.document.createElement('button')
+                        showAllBtn.innerText = 'Show all'
+                        showAllBtn.style.display = 'block'
+                        buttonContainer.appendChild(showAllBtn)
+                        showAllBtn.addEventListener('click', foobar.bind(this))
+
                     }
 
                     let callback = manipulate.bind(requestedWindow, this);
                     callback(this)
-                    // requestedWindow.addEventListener("mapRebuild", callback);
-                    // self.manipulatedWindows.push({requestedWindow, callback});
-                    // if (enforceRebuild) {
-                    //     requestedWindow.gFolderTreeView._rebuild();
-                    // }
                 }
             }
         };
