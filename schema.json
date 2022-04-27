@@ -43,6 +43,25 @@
             "type": "any"
           }
         ]
+      },
+      {
+        "name": "addAccountButtons",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "integer"
+          },
+          {
+            "name": "enforceRebuild",
+            "type": "boolean"
+          },
+          {
+            "name": "accounts",
+            "type": "any"
+          }
+        ]
       }
     ]
   }
