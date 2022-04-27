@@ -24,6 +24,29 @@
             "type": "any"
           }
         ]
+      },
+      {
+        "name": "foo",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "integer"
+          },
+          {
+            "name": "enforceRebuild",
+            "type": "boolean"
+          },
+          {
+            "name": "accounts",
+            "type": "any"
+          },
+          {
+            "name": "account",
+            "type": "any"
+          }
+        ]
       }
     ]
   }

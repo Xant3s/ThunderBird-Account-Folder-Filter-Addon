@@ -33,10 +33,25 @@ const foo = async() => {
         })
     }
 
+    const buttonContainer = document.createElement('div')
+    document.body.appendChild(buttonContainer)
+    for(let account of accounts){
+        let span = document.createElement('span')
+        let accountBtn = document.createElement('button')
+        accountBtn.innerText = account.name
+        span.appendChild(accountBtn)
+        buttonContainer.appendChild(span)
+        accountBtn.addEventListener('click', () => {
+            console.log(account.name)
+        })
+
+    }
+
+
     let globalVar = {value: false}
     // const currentWindow = await messenger.windows.getCurrent()
-    console.log('asdf')
-    await messenger.myapi.hidelocalfolder(currentWindow.id, false, accounts, globalVar);
+    // console.log('asdf')
+    // await messenger.myapi.hidelocalfolder(currentWindow.id, false, accounts, globalVar);
 
     // const accs = await messenger.accounts.list(true)
     // const folders = accs.map(acc => acc.folders)
