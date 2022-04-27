@@ -12,7 +12,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         return {
             AccountsFolderFilter: {
                 async showOnly(windowId, enforceRebuild, accounts, accountName) {
-                    if (!windowId)
+                    if(!windowId)
                         return false;
 
                     // get the real window belonging to the WebExtension window ID
@@ -37,8 +37,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     }
                 },
                 async showAll(windowId, enforceRebuild, accounts) {
-                    if(this.manipulatedWindows === undefined) return
-                    for(let manipulated of this.manipulatedWindows) {
+                    for(let manipulated of self.manipulatedWindows) {
                         manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback);
                         manipulated.requestedWindow.gFolderTreeView._rebuild();
                     }
