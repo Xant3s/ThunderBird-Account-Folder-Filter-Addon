@@ -21,7 +21,6 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         return false;
 
                     function foo() {
-                        console.log(account);
                         for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
                             if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== "mail@samueltruman.com"){
                                 this.window.gFolderTreeView._rowMap.splice(i, 1);
@@ -38,7 +37,10 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     }
                 },
                 async showAll(windowId, enforceRebuild, accounts) {
-                    console.log('accounts', accounts);
+                    for(let manipulated of this.manipulatedWindows) {
+                        manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback);
+                        manipulated.requestedWindow.gFolderTreeView._rebuild();
+                    }
                 }
             }
         };

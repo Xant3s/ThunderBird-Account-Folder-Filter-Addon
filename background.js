@@ -36,7 +36,8 @@ async function foo(window, enforceRebuild) {
         })
     }
 
-    await messenger.AccountsFolderFilter.showOnly(window.id, enforceRebuild, accounts, accounts[0])
+    // await messenger.AccountsFolderFilter.showOnly(window.id, enforceRebuild, accounts, accounts[0])
+    await messenger.AccountsFolderFilter.showAll(window.id, enforceRebuild, accounts)
 }
 
 
