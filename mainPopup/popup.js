@@ -40,8 +40,13 @@ const addAccountButtons = async() => {
         accountBtn.innerText = account.name
         accountBtn.style.display = 'block'
         buttonContainer.appendChild(accountBtn)
-        accountBtn.addEventListener('click', () => {
+        accountBtn.addEventListener('click', async () => {
             console.log(account.name)
+            let windows = await messenger.windows.getAll({windowTypes: ["normal"]});
+            for(let window of windows) {
+                if(window.type !== "normal") continue
+                await messenger.AccountsFolderFilter.showOnly(window.id, true, accounts, account.name)
+            }
         })
     }
 }
