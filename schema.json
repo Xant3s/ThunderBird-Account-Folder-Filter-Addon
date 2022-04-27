@@ -20,8 +20,8 @@
             "type": "any"
           },
           {
-            "name": "account",
-            "type": "any"
+            "name": "accountName",
+            "type": "string"
           }
         ]
       },

@@ -11,7 +11,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
         return {
             AccountsFolderFilter: {
-                async showOnly(windowId, enforceRebuild, accounts, account) {
+                async showOnly(windowId, enforceRebuild, accounts, accountName) {
                     if (!windowId)
                         return false;
 
@@ -22,7 +22,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
                     function foo() {
                         for(let i = this.window.gFolderTreeView._rowMap.length -1; i >= 0 ; i--){
-                            if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== "mail@samueltruman.com"){
+                            if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== accountName){
                                 this.window.gFolderTreeView._rowMap.splice(i, 1);
                             }
                         }
