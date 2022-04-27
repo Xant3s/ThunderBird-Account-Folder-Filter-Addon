@@ -12,11 +12,9 @@ const getNumberOfUnreadMailsRecursive = async (folder) => {
     }
 }
 
-// function to hide the local folder in the given main window (if it is a normal main window)
-async function hideLocalFolder(window, enforceRebuild) {
-    if (window.type != "normal")
+async function foo(window, enforceRebuild) {
+    if(window.type != "normal")
         return;
-
 
     let accounts = []
     const accs = await messenger.accounts.list(true)
@@ -38,9 +36,9 @@ async function hideLocalFolder(window, enforceRebuild) {
         })
     }
 
-
-    // hide local folders for the given window
-    messenger.myapi.hidelocalfolder(window.id, enforceRebuild, accounts);
+    await messenger.AccountsFolderFilter.addAccountButtons(window.id, enforceRebuild, accounts)
+    // await messenger.AccountsFolderFilter.showOnly(window.id, enforceRebuild, accounts, accounts[1].name)
+    // await messenger.AccountsFolderFilter.showAll(window.id, enforceRebuild, accounts)
 }
 
 
@@ -51,12 +49,12 @@ async function hideLocalFolder(window, enforceRebuild) {
 async function init() {
     let windows = await messenger.windows.getAll({windowTypes: ["normal"]});
     for (let window of windows) {
-        hideLocalFolder(window, true);
+        foo(window, true)
     }
 
     // register a event listener for newly opened windows, to
     // automatically call hideLocalFolders() for them
-    messenger.windows.onCreated.addListener((window) => hideLocalFolder(window, false));
+    messenger.windows.onCreated.addListener((window) => foo(window, false));
 }
 
 

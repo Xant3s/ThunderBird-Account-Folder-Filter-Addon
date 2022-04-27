@@ -12,12 +12,13 @@ const getNumberOfUnreadMailsRecursive = async (folder) => {
     }
 }
 
-const foo = async() => {
+const addAccountButtons = async() => {
+    let accounts = []
     const accs = await messenger.accounts.list(true)
     const folders = accs.map(acc => acc.folders)
     for(let accountIndex = 0; accountIndex < accs.length; accountIndex++) {
-        const inbox = folders[accountIndex].filter(folder => folder.type == 'inbox')[0]
-        if(inbox === undefined) break
+        const inbox = folders[accountIndex].filter(folder => folder.type === 'inbox')[0]
+        if(inbox === undefined) continue
         const inboxFolderInfo = await messenger.folders.getFolderInfo(inbox)
         const unreadMessagesInbox = inboxFolderInfo.unreadMessageCount
         let unreadMessagesTotal = 0
@@ -25,20 +26,41 @@ const foo = async() => {
         for(const folder of folders[accountIndex]) {
             unreadMessagesTotal += await getNumberOfUnreadMailsRecursive(folder)
         }
-        console.log(accs[accountIndex].name)
-        console.log('   Unread messages inbox: ' + unreadMessagesInbox)
-        console.log('   Unread messages total: ' + unreadMessagesTotal)
+        accounts.push({
+            name: accs[accountIndex].name,
+            unreadMessagesInbox: unreadMessagesInbox,
+            unreadMessagesTotal: unreadMessagesTotal
+        })
     }
 
-    // Testing
+    const buttonContainer = document.createElement('div')
+    document.body.appendChild(buttonContainer)
+    for(let account of accounts){
+        let accountBtn = document.createElement('button')
+        accountBtn.innerText = `${account.name} (Inbox: ${account.unreadMessagesInbox}, Total: ${account.unreadMessagesTotal})`
+        accountBtn.style.display = 'block'
+        buttonContainer.appendChild(accountBtn)
+        accountBtn.addEventListener('click', async () => {
+            console.log(account.name)
+            let windows = await messenger.windows.getAll({windowTypes: ["normal"]});
+            for(let window of windows) {
+                if(window.type !== "normal") continue
+                await messenger.AccountsFolderFilter.showOnly(window.id, true, accounts, account.name)
+            }
+        })
+    }
 
-    // modify folder pane for all windows of type normal
-    const windows = await messenger.windows.getAll()
-    console.log(windows)
-    const currentWindow = await messenger.windows.getCurrent()
-
-    // searchfox: registerFolderTreeMode
-
+    let showAllBtn = document.createElement('button')
+    showAllBtn.innerText = 'Show all'
+    showAllBtn.style.display = 'block'
+    buttonContainer.appendChild(showAllBtn)
+    showAllBtn.addEventListener('click', async () => {
+        let windows = await messenger.windows.getAll({windowTypes: ["normal"]});
+        for(let window of windows) {
+            if(window.type !== "normal") continue
+            await messenger.AccountsFolderFilter.showAll(window.id, true, accounts)
+        }
+    })
 }
 
-foo()
+addAccountButtons()
