@@ -65,6 +65,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             if (accountName === 'Local Folders') continue
 
                             async function bar() {
+                                await api.showAll(windowId, true, accounts)
                                 await api.showOnly(windowId, true, accounts, accountName)
                             }
 
