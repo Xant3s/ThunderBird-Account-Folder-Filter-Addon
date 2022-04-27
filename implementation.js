@@ -49,26 +49,22 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window;
                     if(!requestedWindow) return false;
 
-                    console.log('hello world');
                     let accountNames = accounts.map(account => account.name)
 
-
                     function manipulate(api) {
-                        // api.showOnly(windowId, false, accounts, accounts[1].name)
-
                         const folderPanelHeader = this.window.document.getElementById('folderPaneHeader')
                         folderPanelHeader.firstChild.innerHTML = 'Select Account'
                         const buttonContainer = this.window.document.createElement('div')
                         buttonContainer.id = 'accountButtonsContainer'
                         folderPanelHeader.insertBefore(buttonContainer, folderPanelHeader.lastChild)
                         const breakLine = this.window.document.createElement('br')
+                        breakLine.id = 'accountButtonsBreakLine'
                         folderPanelHeader.insertBefore(breakLine, buttonContainer)
 
                         for(let accountName of accountNames) {
                             if (accountName === 'Local Folders') continue
 
                             async function bar() {
-                                console.log(accountName)
                                 await api.showOnly(windowId, true, accounts, accountName)
                             }
 
@@ -100,6 +96,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         for(let manipulated of this.manipulatedWindows) {
             manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback);
             manipulated.requestedWindow.document.getElementById('accountButtonsContainer').remove()
+            manipulated.requestedWindow.document.getElementById('accountButtonsBreakLine').remove()
             manipulated.requestedWindow.gFolderTreeView._rebuild();
         }
     }
