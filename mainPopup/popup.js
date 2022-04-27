@@ -49,6 +49,18 @@ const addAccountButtons = async() => {
             }
         })
     }
+
+    let showAllBtn = document.createElement('button')
+    showAllBtn.innerText = 'Show all'
+    showAllBtn.style.display = 'block'
+    buttonContainer.appendChild(showAllBtn)
+    showAllBtn.addEventListener('click', async () => {
+        let windows = await messenger.windows.getAll({windowTypes: ["normal"]});
+        for(let window of windows) {
+            if(window.type !== "normal") continue
+            await messenger.AccountsFolderFilter.showAll(window.id, true, accounts)
+        }
+    })
 }
 
 addAccountButtons()
