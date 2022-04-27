@@ -36,15 +36,13 @@ const foo = async() => {
     const buttonContainer = document.createElement('div')
     document.body.appendChild(buttonContainer)
     for(let account of accounts){
-        let span = document.createElement('span')
         let accountBtn = document.createElement('button')
         accountBtn.innerText = account.name
-        span.appendChild(accountBtn)
-        buttonContainer.appendChild(span)
+        accountBtn.style.display = 'block'
+        buttonContainer.appendChild(accountBtn)
         accountBtn.addEventListener('click', () => {
             console.log(account.name)
         })
-
     }
 
 
