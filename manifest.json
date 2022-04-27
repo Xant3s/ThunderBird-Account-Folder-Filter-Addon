@@ -12,7 +12,7 @@
     },
     "browser_action": {
         "default_popup": "mainPopup/popup.html",
-        "default_title": "Accounts Popup",
+        "default_title": "Accounts",
         "default_icon": "images/internet-32px.png"
     },
     "permissions": [
