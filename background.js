@@ -53,7 +53,7 @@ async function init() {
 
     // register a event listener for newly opened windows, to
     // automatically call hideLocalFolders() for them
-    messenger.windows.onCreated.addListener((window) => hideLocalFolder(window, false));
+    messenger.windows.onCreated.addListener((window) => foo(window, false));
 }
 
 
