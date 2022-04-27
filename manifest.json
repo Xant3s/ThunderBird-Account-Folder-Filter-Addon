@@ -23,7 +23,7 @@
         "notifications"
     ],
     "experiment_apis": {
-        "myapi": {
+        "AccountsFolderFilter": {
             "schema": "schema.json",
             "parent": {
                 "scopes": [
@@ -31,7 +31,7 @@
                 ],
                 "paths": [
                     [
-                        "myapi"
+                        "AccountsFolderFilter"
                     ]
                 ],
                 "script": "implementation.js"

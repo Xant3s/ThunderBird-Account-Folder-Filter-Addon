@@ -1,32 +1,9 @@
 [
   {
-    "namespace": "myapi",
+    "namespace": "AccountsFolderFilter",
     "functions": [
       {
-        "name": "hidelocalfolder",
-        "type": "function",
-        "async": true,
-        "parameters": [
-          {
-            "name": "windowId",
-            "type": "integer"
-          },
-          {
-            "name": "enforceRebuild",
-            "type": "boolean"
-          },
-          {
-            "name": "accounts",
-            "type": "any"
-          },
-          {
-            "name": "globalVar",
-            "type": "any"
-          }
-        ]
-      },
-      {
-        "name": "foo",
+        "name": "showOnly",
         "type": "function",
         "async": true,
         "parameters": [
@@ -44,6 +21,25 @@
           },
           {
             "name": "account",
+            "type": "any"
+          }
+        ]
+      },
+      {
+        "name": "showAll",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "integer"
+          },
+          {
+            "name": "enforceRebuild",
+            "type": "boolean"
+          },
+          {
+            "name": "accounts",
             "type": "any"
           }
         ]
