@@ -37,6 +37,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     }
                 },
                 async showAll(windowId, enforceRebuild, accounts) {
+                    if(this.manipulatedWindows === undefined) return
                     for(let manipulated of this.manipulatedWindows) {
                         manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback);
                         manipulated.requestedWindow.gFolderTreeView._rebuild();
