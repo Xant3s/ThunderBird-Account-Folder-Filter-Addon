@@ -37,7 +37,7 @@ const addAccountButtons = async() => {
     document.body.appendChild(buttonContainer)
     for(let account of accounts){
         let accountBtn = document.createElement('button')
-        accountBtn.innerText = account.name
+        accountBtn.innerText = `${account.name} (Inbox: ${account.unreadMessagesInbox}, Total: ${account.unreadMessagesTotal})`
         accountBtn.style.display = 'block'
         buttonContainer.appendChild(accountBtn)
         accountBtn.addEventListener('click', async () => {
