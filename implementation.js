@@ -121,16 +121,6 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                 },
                 async selectInboxOfAccount(windowId, enforceRebuild, accountName) {
                     let recentWindow = Services.wm.getMostRecentWindow("mail:3pane");
-                    let uri = ""
-                    for(let i = 0; i < MailServices.accounts.allServers.length; i++) {
-                        if(MailServices.accounts.allServers[i].prettyName === accountName) {
-                            // uri = MailServices.accounts.allServers[i].serverURI + "/Inbox";
-                            uri = MailServices.accounts.allServers[i].serverURI + "/INBOX";
-                        }
-                    }
-                    console.log(uri)
-                    // let folder = MailUtils.getExistingFolder(uri);
-                    // recentWindow.gFolderTreeView.selectFolder(folder);
                     recentWindow.gFolderTreeView.selection.select(0)
                     recentWindow.gFolderTreeView.selection.select(1)
                 }
