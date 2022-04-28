@@ -1,0 +1,18 @@
+stages:
+  - build
+
+build-plugin-file:
+  stage: build
+  image: alpine:latest
+  before_script:
+    - apk add zip
+  script:
+    - zip -r addon.zip *
+    - mv addon.zip addon.xpi
+  artifacts:
+    paths:
+      - addon.xpi
+    expire_in: 1 week
+    when: always
+  tags:
+    - docker
