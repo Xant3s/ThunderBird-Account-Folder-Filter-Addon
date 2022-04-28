@@ -72,6 +72,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             let accountBtn = this.window.document.createElement('button')
                             let localFolderIndex = accounts.findIndex(account => account.name === accountName)
                             let unread = accounts[localFolderIndex]?.unreadMessagesTotal
+                            accountBtn.id = `accountButton_${accountName}`
                             accountBtn.innerText = `${accountName} (${unread})`
                             accountBtn.style.display = 'block'
                             accountBtn.addEventListener('click', bar.bind(this))
@@ -90,6 +91,28 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     }
 
                     let callback = manipulate.bind(requestedWindow, this);
+                    callback(this)
+                },
+                async updateUnreadCounts(windowId, enforceRebuild, accounts) {
+                    if(!windowId) return false;
+
+                    //get the real window belonging to the WebExtension window ID
+                    let requestedWindow = context.extension.windowManager.get(windowId, context).window;
+                    if(!requestedWindow) return false;
+
+                    let accountNames = accounts.map(account => account.name)
+
+                    function manipulate() {
+                        for(let accountName of accountNames) {
+                            if(accountName === 'Local Folders') continue
+                            let accountBtn = this.window.document.getElementById(`accountButton_${accountName}`)
+                            let localFolderIndex = accounts.findIndex(account => account.name === accountName)
+                            let unread = accounts[localFolderIndex]?.unreadMessagesTotal
+                            accountBtn.innerText = `${accountName} (${unread})`
+                        }
+                    }
+
+                    let callback = manipulate.bind(requestedWindow);
                     callback(this)
                 }
             }
