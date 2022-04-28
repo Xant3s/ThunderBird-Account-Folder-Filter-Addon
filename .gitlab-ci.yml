@@ -7,7 +7,14 @@ build-plugin-file:
   before_script:
     - apk add zip
   script:
-    - echo "Hello World"
+    - zip addon.zip *
+    - mv addon.zip addon.xpi
+  artifacts:
+    paths:
+      - addon.xpi
+    expire_in:
+      days: 7
+    when: always
   tags:
     - docker
 #  only:
