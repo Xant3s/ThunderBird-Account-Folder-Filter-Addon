@@ -4,6 +4,10 @@
     "description": "Accounts folder filter",
     "version": "0.1.0",
     "author": "Samuel Truman",
+    "developer": {
+        "name": "Samuel Truman",
+        "url": "https://samueltruman.com"
+    },
     "applications": {
         "gecko": {
             "id": "helloworld@yoursite.com",
