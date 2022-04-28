@@ -1,0 +1,10 @@
+stages:
+  - build
+
+build-plugin-file:
+  stage: build
+  image: alpine:latest
+  script:
+    - echo "Hello World"
+#  only:
+#    - branch: master
