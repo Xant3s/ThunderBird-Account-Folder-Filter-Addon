@@ -1,5 +1,8 @@
 var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
 var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+var { MailUtils } = ChromeUtils.import("resource:///modules/MailUtils.jsm");
+var { MailServices } = ChromeUtils.import("resource:///modules/MailServices.jsm");
+
 
 var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
     getAPI(context) {
@@ -67,6 +70,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             async function bar() {
                                 await api.showAll(windowId, true, accounts)
                                 await api.showOnly(windowId, true, accounts, accountName)
+                                await api.selectInboxOfAccount(windowId, true, accountName)
                             }
 
                             let accountBtn = this.window.document.createElement('button')
@@ -114,6 +118,21 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
                     let callback = manipulate.bind(requestedWindow);
                     callback(this)
+                },
+                async selectInboxOfAccount(windowId, enforceRebuild, accountName) {
+                    let recentWindow = Services.wm.getMostRecentWindow("mail:3pane");
+                    let uri = ""
+                    for(let i = 0; i < MailServices.accounts.allServers.length; i++) {
+                        if(MailServices.accounts.allServers[i].prettyName === accountName) {
+                            // uri = MailServices.accounts.allServers[i].serverURI + "/Inbox";
+                            uri = MailServices.accounts.allServers[i].serverURI + "/INBOX";
+                        }
+                    }
+                    console.log(uri)
+                    // let folder = MailUtils.getExistingFolder(uri);
+                    // recentWindow.gFolderTreeView.selectFolder(folder);
+                    recentWindow.gFolderTreeView.selection.select(0)
+                    recentWindow.gFolderTreeView.selection.select(1)
                 }
             }
         };

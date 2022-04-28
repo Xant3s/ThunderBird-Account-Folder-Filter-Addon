@@ -81,6 +81,25 @@
             "type": "any"
           }
         ]
+      },
+      {
+        "name": "selectInboxOfAccount",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "windowId",
+            "type": "integer"
+          },
+          {
+            "name": "enforceRebuild",
+            "type": "boolean"
+          },
+          {
+            "name": "accountName",
+            "type": "string"
+          }
+        ]
       }
     ]
   }
