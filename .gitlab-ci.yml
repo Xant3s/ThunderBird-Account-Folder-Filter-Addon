@@ -5,7 +5,7 @@ build-plugin-file:
   stage: build
   image: alpine:latest
   before_script:
-    - apt install zip
+    - apk add zip
   script:
     - echo "Hello World"
   tags:
