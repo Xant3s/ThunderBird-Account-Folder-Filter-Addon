@@ -41,6 +41,31 @@ async function foo(window, enforceRebuild) {
     // await messenger.AccountsFolderFilter.showAll(window.id, enforceRebuild, accounts)
 }
 
+async function foo2(window) {
+    if(window.type != "normal") return;
+
+    let accounts = []
+    const accs = await messenger.accounts.list(true)
+    const folders = accs.map(acc => acc.folders)
+    for(let accountIndex = 0; accountIndex < accs.length; accountIndex++) {
+        const inbox = folders[accountIndex].filter(folder => folder.type === 'inbox')[0]
+        if(inbox === undefined) continue
+        const inboxFolderInfo = await messenger.folders.getFolderInfo(inbox)
+        const unreadMessagesInbox = inboxFolderInfo.unreadMessageCount
+        let unreadMessagesTotal = 0
+
+        for(const folder of folders[accountIndex]) {
+            unreadMessagesTotal += await getNumberOfUnreadMailsRecursive(folder)
+        }
+        accounts.push({
+            name: accs[accountIndex].name,
+            unreadMessagesInbox: unreadMessagesInbox,
+            unreadMessagesTotal: unreadMessagesTotal
+        })
+    }
+    await messenger.AccountsFolderFilter.updateUnreadCounts(window.id, true, accounts)
+}
+
 
 
 // run thru all already opened main windows (type = normal) and hide local folders
@@ -55,6 +80,12 @@ async function init() {
     // register a event listener for newly opened windows, to
     // automatically call hideLocalFolders() for them
     messenger.windows.onCreated.addListener((window) => foo(window, false));
+    messenger.folders.onFolderInfoChanged.addListener(async (folder, folderInfo) =>{
+        let windows = await messenger.windows.getAll({windowTypes: ["normal"]});
+        for (let window of windows) {
+            foo2(window)
+        }
+    })
 }
 
 
