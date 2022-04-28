@@ -6,5 +6,7 @@ build-plugin-file:
   image: alpine:latest
   script:
     - echo "Hello World"
+  tags:
+    - docker
 #  only:
 #    - branch: master
