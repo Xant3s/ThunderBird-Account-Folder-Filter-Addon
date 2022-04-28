@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Accounts Popup",
-    "description": "Accounts Dropdown",
-    "version": "0.1",
+    "name": "Accounts Folder Filter",
+    "description": "Accounts folder filter",
+    "version": "0.1.0",
     "author": "Samuel Truman",
     "applications": {
         "gecko": {
