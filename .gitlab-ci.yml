@@ -12,8 +12,7 @@ build-plugin-file:
   artifacts:
     paths:
       - addon.xpi
-    expire_in:
-      days: 7
+    expire_in: 1 week
     when: always
   tags:
     - docker
