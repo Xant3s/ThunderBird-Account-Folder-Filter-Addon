@@ -7,7 +7,7 @@ build-plugin-file:
   before_script:
     - apk add zip
   script:
-    - zip addon.zip *
+    - zip -r addon.zip *
     - mv addon.zip addon.xpi
   artifacts:
     paths:
@@ -16,5 +16,3 @@ build-plugin-file:
     when: always
   tags:
     - docker
-#  only:
-#    - branch: master
