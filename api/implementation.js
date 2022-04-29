@@ -71,25 +71,17 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                                 await api.selectInboxOfAccount()
                             }
 
-                            let accountBtn = this.window.document.createElement('button')
+                            let accountBtn = addAccountButton(buttonContainer)
                             let numUnread = getNumberOfTotalUnreadMails(accounts, accountName)
                             accountBtn.id = `accountButton_${accountName}`
                             updateButtonText(accountBtn, accountName, numUnread)
-                            accountBtn.style.display = 'block'
                             updateButtonStyle(accountBtn, numUnread)
                             accountBtn.addEventListener('click', bar.bind(this))
-                            buttonContainer.appendChild(accountBtn)
                         }
 
-                        async function foobar() {
-                            await api.showAll()
-                        }
-
-                        let showAllBtn = this.window.document.createElement('button')
+                        let showAllBtn = addAccountButton(buttonContainer)
                         showAllBtn.innerText = 'Show all'
-                        showAllBtn.style.display = 'block'
-                        buttonContainer.appendChild(showAllBtn)
-                        showAllBtn.addEventListener('click', foobar.bind(this))
+                        showAllBtn.addEventListener('click', api.showAll)
                     }
 
                     let callback = manipulate.bind(requestedWindow, this)
@@ -141,6 +133,13 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         }
         Services.obs.notifyObservers(null, "startupcache-invalidate", null)
     }
+}
+
+function addAccountButton(buttonContainer) {
+    let button = buttonContainer.ownerDocument.createElement('button')
+    button.style.display = 'block'
+    buttonContainer.appendChild(button)
+    return button
 }
 
 function getNumberOfTotalUnreadMails(accounts, accountName) {
