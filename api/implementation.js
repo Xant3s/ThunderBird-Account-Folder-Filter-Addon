@@ -79,6 +79,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             accountBtn.id = `accountButton_${accountName}`
                             accountBtn.innerText = `${accountName} (${unread})`
                             accountBtn.style.display = 'block'
+                            accountBtn.style.fontWeight = unread ? 'bold' : 'normal'
                             accountBtn.addEventListener('click', bar.bind(this))
                             buttonContainer.appendChild(accountBtn)
                         }
