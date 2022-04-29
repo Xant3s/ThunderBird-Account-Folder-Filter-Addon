@@ -51,34 +51,21 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     if(!requestedWindow) return false
 
                     let accountNames = accounts.map(account => account.name)
+                    const buttonContainer = addButtonContainerToFolderPane(requestedWindow.window.document)
 
-                    function manipulate(api) {
-                        const buttonContainer = addButtonContainerToFolderPane(this.window.document)
-
-                        for(let accountName of accountNames) {
-                            if(accountName === 'Local Folders') continue
-
-                            async function selectAccount() {
-                                await api.showAll()
-                                await api.showOnly(windowId, true, accounts, accountName)
-                                await api.selectInboxOfAccount()
-                            }
-
-                            let accountBtn = addAccountButton(buttonContainer)
-                            let numUnread = getNumberOfTotalUnreadMails(accounts, accountName)
-                            accountBtn.id = `accountButton_${accountName}`
-                            updateButtonText(accountBtn, accountName, numUnread)
-                            updateButtonStyle(accountBtn, numUnread)
-                            accountBtn.addEventListener('click', selectAccount.bind(this))
-                        }
-
-                        let showAllBtn = addAccountButton(buttonContainer)
-                        showAllBtn.innerText = 'Show all'
-                        showAllBtn.addEventListener('click', api.showAll)
+                    for(let accountName of accountNames) {
+                        if(accountName === 'Local Folders') continue
+                        let accountBtn = addAccountButton(buttonContainer)
+                        let numUnread = getNumberOfTotalUnreadMails(accounts, accountName)
+                        accountBtn.id = `accountButton_${accountName}`
+                        updateButtonText(accountBtn, accountName, numUnread)
+                        updateButtonStyle(accountBtn, numUnread)
+                        accountBtn.addEventListener('click', () => selectAccount(this, windowId, accounts, accountName))
                     }
 
-                    let callback = manipulate.bind(requestedWindow, this)
-                    callback(this)
+                    let showAllBtn = addAccountButton(buttonContainer)
+                    showAllBtn.innerText = 'Show all'
+                    showAllBtn.addEventListener('click', this.showAll)
                 },
                 async updateUnreadCounts(windowId, enforceRebuild, accounts) {
                     if(!windowId) return false
@@ -126,6 +113,12 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         }
         Services.obs.notifyObservers(null, "startupcache-invalidate", null)
     }
+}
+
+async function selectAccount(api, windowId, accounts, accountName) {
+    await api.showAll()
+    await api.showOnly(windowId, true, accounts, accountName)
+    await api.selectInboxOfAccount()
 }
 
 function addButtonContainerToFolderPane(document) {
