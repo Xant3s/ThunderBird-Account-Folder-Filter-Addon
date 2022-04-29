@@ -23,7 +23,7 @@
     ],
     "experiment_apis": {
         "AccountsFolderFilter": {
-            "schema": "schema.json",
+            "schema": "api/schema.json",
             "parent": {
                 "scopes": [
                     "addon_parent"
@@ -33,7 +33,7 @@
                         "AccountsFolderFilter"
                     ]
                 ],
-                "script": "implementation.js"
+                "script": "api/implementation.js"
             }
         }
     },
