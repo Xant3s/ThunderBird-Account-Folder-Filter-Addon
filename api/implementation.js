@@ -21,7 +21,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window
                     if(!requestedWindow) return false
 
-                    function foo() {
+                    function updateFolderTreeView() {
                         for(let i = this.window.gFolderTreeView._rowMap.length - 1; i >= 0; i--) {
                             if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== accountName) {
                                 this.window.gFolderTreeView._rowMap.splice(i, 1)
@@ -29,7 +29,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         }
                     }
 
-                    let callback = foo.bind(requestedWindow)
+                    let callback = updateFolderTreeView.bind(requestedWindow)
                     requestedWindow.addEventListener("mapRebuild", callback)
                     self.manipulatedWindows.push({requestedWindow, callback})
 
@@ -91,7 +91,6 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         showAllBtn.style.display = 'block'
                         buttonContainer.appendChild(showAllBtn)
                         showAllBtn.addEventListener('click', foobar.bind(this))
-
                     }
 
                     let callback = manipulate.bind(requestedWindow, this)
@@ -106,19 +105,14 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
                     let accountNames = accounts.map(account => account.name)
 
-                    function manipulate() {
-                        for(let accountName of accountNames) {
-                            if(accountName === 'Local Folders') continue
-                            let accountBtn = this.window.document.getElementById(`accountButton_${accountName}`)
-                            let localFolderIndex = accounts.findIndex(account => account.name === accountName)
-                            let unread = accounts[localFolderIndex]?.unreadMessagesTotal
-                            accountBtn.innerText = `${accountName} (${unread})`
-                            accountBtn.style.fontWeight = unread ? 'bold' : 'normal'
-                        }
+                    for(let accountName of accountNames) {
+                        if(accountName === 'Local Folders') continue
+                        let accountBtn = requestedWindow.window.document.getElementById(`accountButton_${accountName}`)
+                        let localFolderIndex = accounts.findIndex(account => account.name === accountName)
+                        let unread = accounts[localFolderIndex]?.unreadMessagesTotal
+                        accountBtn.innerText = `${accountName} (${unread})`
+                        accountBtn.style.fontWeight = unread ? 'bold' : 'normal'
                     }
-
-                    let callback = manipulate.bind(requestedWindow)
-                    callback(this)
                 },
                 async selectInboxOfAccount() {
                     let recentWindow = Services.wm.getMostRecentWindow("mail:3pane")
