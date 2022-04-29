@@ -53,19 +53,12 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     let accountNames = accounts.map(account => account.name)
 
                     function manipulate(api) {
-                        const folderPanelHeader = this.window.document.getElementById('folderPaneHeader')
-                        folderPanelHeader.firstChild.innerHTML = 'Select Account'
-                        const buttonContainer = this.window.document.createElement('div')
-                        buttonContainer.id = 'accountButtonsContainer'
-                        folderPanelHeader.insertBefore(buttonContainer, folderPanelHeader.lastChild)
-                        const breakLine = this.window.document.createElement('br')
-                        breakLine.id = 'accountButtonsBreakLine'
-                        folderPanelHeader.insertBefore(breakLine, buttonContainer)
+                        const buttonContainer = addButtonContainerToFolderPane(this.window.document)
 
                         for(let accountName of accountNames) {
                             if(accountName === 'Local Folders') continue
 
-                            async function bar() {
+                            async function selectAccount() {
                                 await api.showAll()
                                 await api.showOnly(windowId, true, accounts, accountName)
                                 await api.selectInboxOfAccount()
@@ -76,7 +69,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             accountBtn.id = `accountButton_${accountName}`
                             updateButtonText(accountBtn, accountName, numUnread)
                             updateButtonStyle(accountBtn, numUnread)
-                            accountBtn.addEventListener('click', bar.bind(this))
+                            accountBtn.addEventListener('click', selectAccount.bind(this))
                         }
 
                         let showAllBtn = addAccountButton(buttonContainer)
@@ -133,6 +126,18 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         }
         Services.obs.notifyObservers(null, "startupcache-invalidate", null)
     }
+}
+
+function addButtonContainerToFolderPane(document) {
+    const folderPanelHeader = document.getElementById('folderPaneHeader')
+    const buttonContainer = document.createElement('div')
+    const breakLine = document.createElement('br')
+    folderPanelHeader.firstChild.innerHTML = 'Select Account'
+    buttonContainer.id = 'accountButtonsContainer'
+    breakLine.id = 'accountButtonsBreakLine'
+    folderPanelHeader.insertBefore(buttonContainer, folderPanelHeader.lastChild)
+    folderPanelHeader.insertBefore(breakLine, buttonContainer)
+    return buttonContainer
 }
 
 function addAccountButton(buttonContainer) {
