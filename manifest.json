@@ -38,7 +38,9 @@
         }
     },
     "background": {
-        "page": "background.html"
+        "scripts": [
+            "background.js"
+        ]
     },
     "icons": {
         "64": "images/internet.png",
