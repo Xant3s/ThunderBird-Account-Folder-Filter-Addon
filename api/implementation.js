@@ -83,13 +83,6 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         updateButtonText(accountBtn, accountName, numUnread)
                         updateButtonStyle(accountBtn, numUnread)
                     }
-                },
-                async selectInboxOfAccount() {
-                    let recentWindow = Services.wm.getMostRecentWindow("mail:3pane")
-                    // Select the account. This is useful if the account is collapsed and no inbox is selectable.
-                    recentWindow.gFolderTreeView.selection.select(0)
-                    // Select the inbox. Will have no effect if the account is collapsed.
-                    recentWindow.gFolderTreeView.selection.select(1)
                 }
             }
         }
@@ -118,7 +111,15 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 async function selectAccount(api, windowId, accounts, accountName) {
     await api.showAll()
     await api.showOnly(windowId, true, accounts, accountName)
-    await api.selectInboxOfAccount()
+    await selectInboxOfAccount()
+}
+
+async function selectInboxOfAccount() {
+    let recentWindow = Services.wm.getMostRecentWindow("mail:3pane")
+    // Select the account. This is useful if the account is collapsed and no inbox is selectable.
+    recentWindow.gFolderTreeView.selection.select(0)
+    // Select the inbox. Will have no effect if the account is collapsed.
+    recentWindow.gFolderTreeView.selection.select(1)
 }
 
 function addButtonContainerToFolderPane(document) {
