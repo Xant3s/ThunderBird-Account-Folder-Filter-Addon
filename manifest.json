@@ -14,11 +14,6 @@
             "strict_min_version": "91.0"
         }
     },
-    "browser_action": {
-        "default_popup": "mainPopup/popup.html",
-        "default_title": "Accounts",
-        "default_icon": "images/internet-32px.png"
-    },
     "permissions": [
         "messagesRead",
         "accountsRead",
