@@ -113,6 +113,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             let localFolderIndex = accounts.findIndex(account => account.name === accountName)
                             let unread = accounts[localFolderIndex]?.unreadMessagesTotal
                             accountBtn.innerText = `${accountName} (${unread})`
+                            accountBtn.style.fontWeight = unread ? 'bold' : 'normal'
                         }
                     }
 
