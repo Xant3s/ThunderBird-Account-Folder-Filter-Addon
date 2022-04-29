@@ -27,52 +27,35 @@ async function init() {
     // Handle existing windows.
     let windows = await messenger.windows.getAll({windowTypes: ["normal"]})
     for(let window of windows) {
-        foo(window, true)
+        startAddon(window, true)
     }
 
     // Handle future windows.
-    messenger.windows.onCreated.addListener((window) => foo(window, false))
+    messenger.windows.onCreated.addListener((window) => startAddon(window, false))
 
     // Update number of unread messages in account filter buttons.
     messenger.folders.onFolderInfoChanged.addListener(async (folder, folderInfo) => {
         let windows = await messenger.windows.getAll({windowTypes: ["normal"]})
         for(let window of windows) {
-            foo2(window)
+            updateUnreadCounter(window)
         }
     })
 }
 
-async function foo(window, enforceRebuild) {
+async function startAddon(window, enforceRebuild) {
     if(window.type !== "normal") return
-
-    let accounts = []
-    const accs = await messenger.accounts.list(true)
-    const folders = accs.map(acc => acc.folders)
-    for(let accountIndex = 0; accountIndex < accs.length; accountIndex++) {
-        const inbox = folders[accountIndex].filter(folder => folder.type === 'inbox')[0]
-        if(inbox === undefined) continue
-        const inboxFolderInfo = await messenger.folders.getFolderInfo(inbox)
-        const unreadMessagesInbox = inboxFolderInfo.unreadMessageCount
-        let unreadMessagesTotal = 0
-
-        for(const folder of folders[accountIndex]) {
-            unreadMessagesTotal += await getNumberOfUnreadMailsRecursive(folder)
-        }
-        accounts.push({
-            name: accs[accountIndex].name,
-            unreadMessagesInbox: unreadMessagesInbox,
-            unreadMessagesTotal: unreadMessagesTotal
-        })
-    }
-
+    let accounts = await getNumberOfUnreadMails()
     await messenger.AccountsFolderFilter.addAccountButtons(window.id, enforceRebuild, accounts)
     await messenger.AccountsFolderFilter.showOnly(window.id, enforceRebuild, accounts, accounts[0].name)
 }
 
-
-async function foo2(window) {
+async function updateUnreadCounter(window) {
     if(window.type !== "normal") return
+    let accounts = await getNumberOfUnreadMails()
+    await messenger.AccountsFolderFilter.updateUnreadCounts(window.id, true, accounts)
+}
 
+async function getNumberOfUnreadMails() {
     let accounts = []
     const accs = await messenger.accounts.list(true)
     const folders = accs.map(acc => acc.folders)
@@ -92,8 +75,9 @@ async function foo2(window) {
             unreadMessagesTotal: unreadMessagesTotal
         })
     }
-    await messenger.AccountsFolderFilter.updateUnreadCounts(window.id, true, accounts)
+    return accounts
 }
+
 const getNumberOfUnreadMailsRecursive = async (folder) => {
     const hasChildFolders = folder.subFolders.length > 0
     const folderInfo = await messenger.folders.getFolderInfo(folder)
