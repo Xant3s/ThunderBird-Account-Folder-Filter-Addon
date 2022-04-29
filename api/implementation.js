@@ -72,12 +72,11 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             }
 
                             let accountBtn = this.window.document.createElement('button')
-                            let localFolderIndex = accounts.findIndex(account => account.name === accountName)
-                            let unread = accounts[localFolderIndex]?.unreadMessagesTotal
+                            let numUnread = getNumberOfTotalUnreadMails(accounts, accountName)
                             accountBtn.id = `accountButton_${accountName}`
-                            accountBtn.innerText = `${accountName} (${unread})`
+                            updateButtonText(accountBtn, accountName, numUnread)
                             accountBtn.style.display = 'block'
-                            accountBtn.style.fontWeight = unread ? 'bold' : 'normal'
+                            updateButtonStyle(accountBtn, numUnread)
                             accountBtn.addEventListener('click', bar.bind(this))
                             buttonContainer.appendChild(accountBtn)
                         }
@@ -108,10 +107,9 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     for(let accountName of accountNames) {
                         if(accountName === 'Local Folders') continue
                         let accountBtn = requestedWindow.window.document.getElementById(`accountButton_${accountName}`)
-                        let localFolderIndex = accounts.findIndex(account => account.name === accountName)
-                        let unread = accounts[localFolderIndex]?.unreadMessagesTotal
-                        accountBtn.innerText = `${accountName} (${unread})`
-                        accountBtn.style.fontWeight = unread ? 'bold' : 'normal'
+                        let numUnread = getNumberOfTotalUnreadMails(accounts, accountName)
+                        updateButtonText(accountBtn, accountName, numUnread)
+                        updateButtonStyle(accountBtn, numUnread)
                     }
                 },
                 async selectInboxOfAccount() {
@@ -143,4 +141,17 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         }
         Services.obs.notifyObservers(null, "startupcache-invalidate", null)
     }
+}
+
+function getNumberOfTotalUnreadMails(accounts, accountName) {
+    return accounts.find(account => account.name === accountName)
+                    ?.unreadMessagesTotal
+}
+
+function updateButtonText(accountBtn, accountName, numUnread) {
+    accountBtn.innerText = `${accountName} (${numUnread})`
+}
+
+function updateButtonStyle(accountBtn, hasUnreadMessages) {
+    accountBtn.style.fontWeight = hasUnreadMessages ? 'bold' : 'normal'
 }
