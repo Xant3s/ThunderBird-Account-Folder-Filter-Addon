@@ -29,20 +29,7 @@
         "name": "showAll",
         "type": "function",
         "async": true,
-        "parameters": [
-          {
-            "name": "windowId",
-            "type": "integer"
-          },
-          {
-            "name": "enforceRebuild",
-            "type": "boolean"
-          },
-          {
-            "name": "accounts",
-            "type": "any"
-          }
-        ]
+        "parameters": []
       },
       {
         "name": "addAccountButtons",
@@ -86,20 +73,7 @@
         "name": "selectInboxOfAccount",
         "type": "function",
         "async": true,
-        "parameters": [
-          {
-            "name": "windowId",
-            "type": "integer"
-          },
-          {
-            "name": "enforceRebuild",
-            "type": "boolean"
-          },
-          {
-            "name": "accountName",
-            "type": "string"
-          }
-        ]
+        "parameters": []
       }
     ]
   }

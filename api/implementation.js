@@ -39,7 +39,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         requestedWindow.gFolderTreeView._rebuild();
                     }
                 },
-                async showAll(windowId, enforceRebuild, accounts) {
+                async showAll() {
                     for(let manipulated of self.manipulatedWindows) {
                         manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback);
                         manipulated.requestedWindow.gFolderTreeView._rebuild();
@@ -68,9 +68,9 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                             if (accountName === 'Local Folders') continue
 
                             async function bar() {
-                                await api.showAll(windowId, true, accounts)
+                                await api.showAll()
                                 await api.showOnly(windowId, true, accounts, accountName)
-                                await api.selectInboxOfAccount(windowId, true, accountName)
+                                await api.selectInboxOfAccount()
                             }
 
                             let accountBtn = this.window.document.createElement('button')
@@ -84,7 +84,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         }
 
                         async function foobar() {
-                            await api.showAll(windowId, true, accounts)
+                            await api.showAll()
                         }
                         let showAllBtn = this.window.document.createElement('button')
                         showAllBtn.innerText = 'Show all'
@@ -120,9 +120,11 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     let callback = manipulate.bind(requestedWindow);
                     callback(this)
                 },
-                async selectInboxOfAccount(windowId, enforceRebuild, accountName) {
+                async selectInboxOfAccount() {
                     let recentWindow = Services.wm.getMostRecentWindow("mail:3pane");
+                    // Select the account. This is useful if the account is collapsed and no inbox is selectable.
                     recentWindow.gFolderTreeView.selection.select(0)
+                    // Select the inbox. Will have no effect if the account is collapsed.
                     recentWindow.gFolderTreeView.selection.select(1)
                 }
             }

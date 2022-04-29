@@ -14,11 +14,6 @@
             "strict_min_version": "91.0"
         }
     },
-    "browser_action": {
-        "default_popup": "mainPopup/popup.html",
-        "default_title": "Accounts",
-        "default_icon": "images/internet-32px.png"
-    },
     "permissions": [
         "messagesRead",
         "accountsRead",
@@ -28,7 +23,7 @@
     ],
     "experiment_apis": {
         "AccountsFolderFilter": {
-            "schema": "schema.json",
+            "schema": "api/schema.json",
             "parent": {
                 "scopes": [
                     "addon_parent"
@@ -38,12 +33,14 @@
                         "AccountsFolderFilter"
                     ]
                 ],
-                "script": "implementation.js"
+                "script": "api/implementation.js"
             }
         }
     },
     "background": {
-        "page": "background.html"
+        "scripts": [
+            "background.js"
+        ]
     },
     "icons": {
         "64": "images/internet.png",
