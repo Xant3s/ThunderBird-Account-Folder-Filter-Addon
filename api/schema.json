@@ -68,12 +68,6 @@
             "type": "any"
           }
         ]
-      },
-      {
-        "name": "selectInboxOfAccount",
-        "type": "function",
-        "async": true,
-        "parameters": []
       }
     ]
   }
