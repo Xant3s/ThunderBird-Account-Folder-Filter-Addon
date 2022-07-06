@@ -14,6 +14,10 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
         return {
             AccountsFolderFilter: {
+                async selectAccount(windowId, accounts, accountName) {
+                    if(!windowId) return false
+                    await selectAccount(this, windowId, accounts, accountName)
+                },
                 async showOnly(windowId, enforceRebuild, accounts, accountName) {
                     if(!windowId) return false
 
