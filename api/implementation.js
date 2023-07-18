@@ -10,7 +10,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         context.callOnClose(this)
 
         // keep track of windows manipulated by this API
-        // this.manipulatedWindows = []
+        this.manipulatedWindows = []
 
         return {
             AccountsFolderFilter: {
@@ -55,6 +55,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     //get the real window belonging to the WebExtension window ID
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window
                     if(!requestedWindow) return false
+                    self.manipulatedWindows.push(requestedWindow)
 
                     let accountNames = accounts.map(account => account.name)
                     const buttonContainer = addButtonContainerToFolderPane(requestedWindow.window.document)
@@ -96,28 +97,21 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         }
     }
 
-    close() {   // TODO: not called anymore?
-        console.log('close')
+    close() {
         // This is called when the API shuts down. This API could be invoked multiple times in different contexts
         // and we therefore need to cleanup actions done by this API here.
-        // for(let manipulated of this.manipulatedWindows) {
-            const browser = document.getElementById('mail3PaneTabBrowser1')
-            console.log(browser)
+        for(let manipulated of this.manipulatedWindows) {
+            const browser = manipulated.document.getElementById('mail3PaneTabBrowser1')
             const doc = browser.contentWindow.document
             // manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
             const folderPanelHeader = doc.getElementById('folderPaneHeaderBar')
             const row = doc.getElementById('accountFolderFilterHeaderRow')
-
-            console.log('try revert')
             while(row.firstChild) {
                 folderPanelHeader.appendChild(row.firstChild)
             }
-
-            // doc.getElementById('accountButtonsContainer').remove()
-            // doc.getElementById('accountButtonsBreakLine').remove()
             doc.getElementById('accountFolderFilterContainer').remove()
             // manipulated.requestedWindow.gFolderTreeView._rebuild()
-        // }
+        }
     }
 
     onShutdown(isAppShutdown) {
