@@ -10,7 +10,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         context.callOnClose(this)
 
         // keep track of windows manipulated by this API
-        this.manipulatedWindows = []
+        // this.manipulatedWindows = []
 
         return {
             AccountsFolderFilter: {
@@ -25,27 +25,29 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window
                     if(!requestedWindow) return false
 
-                    function updateFolderTreeView() {
-                        for(let i = this.window.gFolderTreeView._rowMap.length - 1; i >= 0; i--) {
-                            if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== accountName) {
-                                this.window.gFolderTreeView._rowMap.splice(i, 1)
-                            }
-                        }
-                    }
-
-                    let callback = updateFolderTreeView.bind(requestedWindow)
-                    requestedWindow.addEventListener("mapRebuild", callback)
-                    self.manipulatedWindows.push({requestedWindow, callback})
-
-                    if(enforceRebuild) {
-                        requestedWindow.gFolderTreeView._rebuild()
-                    }
+                    console.log('showOnly not implemented')
+                    // function updateFolderTreeView() {
+                    //     for(let i = this.window.gFolderTreeView._rowMap.length - 1; i >= 0; i--) {
+                    //         if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== accountName) {
+                    //             this.window.gFolderTreeView._rowMap.splice(i, 1)
+                    //         }
+                    //     }
+                    // }
+                    //
+                    // let callback = updateFolderTreeView.bind(requestedWindow)
+                    // requestedWindow.addEventListener("mapRebuild", callback)
+                    // self.manipulatedWindows.push({requestedWindow, callback})
+                    //
+                    // if(enforceRebuild) {
+                    //     requestedWindow.gFolderTreeView._rebuild()
+                    // }
                 },
                 async showAll() {
-                    for(let manipulated of self.manipulatedWindows) {
-                        manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
-                        manipulated.requestedWindow.gFolderTreeView._rebuild()
-                    }
+                    console.log('showAll not implemented')
+                    // for(let manipulated of self.manipulatedWindows) {
+                    //     manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
+                    //     manipulated.requestedWindow.gFolderTreeView._rebuild()
+                    // }
                 },
                 async addAccountButtons(windowId, enforceRebuild, accounts) {
                     if(!windowId) return false
@@ -82,7 +84,9 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
                     for(let accountName of accountNames) {
                         if(accountName === 'Local Folders') continue
-                        let accountBtn = requestedWindow.window.document.getElementById(`accountButton_${accountName}`)
+                        const browser = requestedWindow.document.getElementById('mail3PaneTabBrowser1')
+                        const doc = browser.contentWindow.document
+                        let accountBtn = doc.getElementById(`accountButton_${accountName}`)
                         let numUnread = getNumberOfTotalUnreadMails(accounts, accountName)
                         updateButtonText(accountBtn, accountName, numUnread)
                         updateButtonStyle(accountBtn, numUnread)
@@ -93,13 +97,14 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
     }
 
     close() {   // TODO: not called anymore?
+        console.log('close')
         // This is called when the API shuts down. This API could be invoked multiple times in different contexts
         // and we therefore need to cleanup actions done by this API here.
-        for(let manipulated of this.manipulatedWindows) {
+        // for(let manipulated of this.manipulatedWindows) {
             const browser = document.getElementById('mail3PaneTabBrowser1')
             console.log(browser)
             const doc = browser.contentWindow.document
-            manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
+            // manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
             const folderPanelHeader = doc.getElementById('folderPaneHeaderBar')
             const row = doc.getElementById('accountFolderFilterHeaderRow')
 
@@ -111,8 +116,8 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
             // doc.getElementById('accountButtonsContainer').remove()
             // doc.getElementById('accountButtonsBreakLine').remove()
             doc.getElementById('accountFolderFilterContainer').remove()
-            manipulated.requestedWindow.gFolderTreeView._rebuild()
-        }
+            // manipulated.requestedWindow.gFolderTreeView._rebuild()
+        // }
     }
 
     onShutdown(isAppShutdown) {
@@ -131,11 +136,12 @@ async function selectAccount(api, windowId, accounts, accountName) {
 }
 
 async function selectInboxOfAccount() {
+    console.log('selectInboxOfAccount not implemented')
     let recentWindow = Services.wm.getMostRecentWindow("mail:3pane")
     // Select the account. This is useful if the account is collapsed and no inbox is selectable.
-    recentWindow.gFolderTreeView.selection.select(0)
+    // recentWindow.gFolderTreeView.selection.select(0)
     // Select the inbox. Will have no effect if the account is collapsed.
-    recentWindow.gFolderTreeView.selection.select(1)
+    // recentWindow.gFolderTreeView.selection.select(1)
 }
 
 function addButtonContainerToFolderPane(document) {
