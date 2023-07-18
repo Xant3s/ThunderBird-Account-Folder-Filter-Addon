@@ -92,13 +92,25 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         }
     }
 
-    close() {
+    close() {   // TODO: not called anymore?
         // This is called when the API shuts down. This API could be invoked multiple times in different contexts
         // and we therefore need to cleanup actions done by this API here.
         for(let manipulated of this.manipulatedWindows) {
+            const browser = document.getElementById('mail3PaneTabBrowser1')
+            console.log(browser)
+            const doc = browser.contentWindow.document
             manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
-            manipulated.requestedWindow.document.getElementById('accountButtonsContainer').remove()
-            manipulated.requestedWindow.document.getElementById('accountButtonsBreakLine').remove()
+            const folderPanelHeader = doc.getElementById('folderPaneHeaderBar')
+            const row = doc.getElementById('accountFolderFilterHeaderRow')
+
+            console.log('try revert')
+            while(row.firstChild) {
+                folderPanelHeader.appendChild(row.firstChild)
+            }
+
+            // doc.getElementById('accountButtonsContainer').remove()
+            // doc.getElementById('accountButtonsBreakLine').remove()
+            doc.getElementById('accountFolderFilterContainer').remove()
             manipulated.requestedWindow.gFolderTreeView._rebuild()
         }
     }
@@ -127,14 +139,37 @@ async function selectInboxOfAccount() {
 }
 
 function addButtonContainerToFolderPane(document) {
-    const folderPanelHeader = document.getElementById('folderPaneHeader')
-    const buttonContainer = document.createElement('div')
+    const browser = document.getElementById('mail3PaneTabBrowser1')
+    const doc = browser.contentWindow.document
+    const folderPanelHeader = doc.getElementById('folderPaneHeaderBar')
+    const container = document.createElement('div')
+    container.id = 'accountFolderFilterContainer'
+    container.style.display = 'flex'
+    container.style.flexDirection = 'column'
+    container.style.alignItems = 'center'
+    const headerRow = document.createElement('div')
+    headerRow.id = 'accountFolderFilterHeaderRow'
+    headerRow.style.display = 'flex'
+    headerRow.style.flexDirection = 'row-reverse'
+    headerRow.style.gap = 'var(--folder-tree-header-gap)'
+    headerRow.style.padding = 'var(--folder-tree-header-padding)'
+    headerRow.style.alignItems = 'center'
+
+    // move all standard element to headerRow
+    while(folderPanelHeader.firstChild) {
+        headerRow.appendChild(folderPanelHeader.firstChild)
+    }
+
     const breakLine = document.createElement('br')
-    folderPanelHeader.firstChild.innerHTML = 'Select Account'
-    buttonContainer.id = 'accountButtonsContainer'
     breakLine.id = 'accountButtonsBreakLine'
-    folderPanelHeader.insertBefore(buttonContainer, folderPanelHeader.lastChild)
-    folderPanelHeader.insertBefore(breakLine, buttonContainer)
+    const buttonContainer = document.createElement('div')
+    buttonContainer.id = 'accountButtonsContainer'
+    buttonContainer.style.display = 'flex'
+    buttonContainer.style.flexDirection = 'column'
+    folderPanelHeader.appendChild(container)
+    container.appendChild(headerRow)
+    container.appendChild(breakLine)
+    container.appendChild(buttonContainer)
     return buttonContainer
 }
 
