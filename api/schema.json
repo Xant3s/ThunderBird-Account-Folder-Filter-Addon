@@ -3,25 +3,6 @@
     "namespace": "AccountsFolderFilter",
     "functions": [
       {
-        "name": "selectAccount",
-        "type": "function",
-        "async": true,
-        "parameters": [
-          {
-            "name": "windowId",
-            "type": "integer"
-          },
-          {
-            "name": "accounts",
-            "type": "any"
-          },
-          {
-            "name": "accountName",
-            "type": "string"
-          }
-        ]
-      },
-      {
         "name": "showOnly",
         "type": "function",
         "async": true,
@@ -29,10 +10,6 @@
           {
             "name": "windowId",
             "type": "integer"
-          },
-          {
-            "name": "enforceRebuild",
-            "type": "boolean"
           },
           {
             "name": "accounts",
@@ -60,10 +37,6 @@
             "type": "integer"
           },
           {
-            "name": "enforceRebuild",
-            "type": "boolean"
-          },
-          {
             "name": "accounts",
             "type": "any"
           }
@@ -77,10 +50,6 @@
           {
             "name": "windowId",
             "type": "integer"
-          },
-          {
-            "name": "enforceRebuild",
-            "type": "boolean"
           },
           {
             "name": "accounts",

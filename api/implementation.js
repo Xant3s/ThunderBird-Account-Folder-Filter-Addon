@@ -14,45 +14,46 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
         return {
             AccountsFolderFilter: {
-                async selectAccount(windowId, accounts, accountName) {
-                    if(!windowId) return false
-                    await selectAccount(this, windowId, accounts, accountName)
-                },
-                async showOnly(windowId, enforceRebuild, accounts, accountName) {
+                async showOnly(windowId, accounts, accountName) {
                     if(!windowId) return false
 
                     // get the real window belonging to the WebExtension window ID
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window
                     if(!requestedWindow) return false
 
-                    function updateFolderTreeView() {
-                        for(let i = this.window.gFolderTreeView._rowMap.length - 1; i >= 0; i--) {
-                            if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== accountName) {
-                                this.window.gFolderTreeView._rowMap.splice(i, 1)
-                            }
+                    const browser = requestedWindow.document.getElementById('mail3PaneTabBrowser1')
+                    const doc = browser.contentWindow.document
+                    const folderTree = doc.getElementById("folderTree")
+                    const accountList = folderTree.getElementsByTagName("ul")[0]
+                    self.originalAccountList = accountList.cloneNode(true)
+                    const accountListItems = accountList.children
+
+                    for(let i = accountListItems.length - 1; i >= 0; i--) {
+                        if(!accountListItems[i].getAttribute("aria-label")?.includes(accountName)) {
+                            accountListItems[i].remove()
                         }
-                    }
-
-                    let callback = updateFolderTreeView.bind(requestedWindow)
-                    requestedWindow.addEventListener("mapRebuild", callback)
-                    self.manipulatedWindows.push({requestedWindow, callback})
-
-                    if(enforceRebuild) {
-                        requestedWindow.gFolderTreeView._rebuild()
+                        else {
+                            // Show account's inbox
+                            accountListItems[i].getElementsByTagName('li')[0].click()
+                        }
                     }
                 },
                 async showAll() {
+                    if(!self.originalAccountList) return
                     for(let manipulated of self.manipulatedWindows) {
-                        manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
-                        manipulated.requestedWindow.gFolderTreeView._rebuild()
+                        manipulated.document.getElementById('appmenu_smartFolders').click()
+                        manipulated.document.getElementById('appmenu_allFolders').click()
+                        manipulated.document.getElementById('appmenu_allFolders').click()
+                        manipulated.document.getElementById('appmenu_smartFolders').click()
                     }
                 },
-                async addAccountButtons(windowId, enforceRebuild, accounts) {
+                async addAccountButtons(windowId, accounts) {
                     if(!windowId) return false
 
                     //get the real window belonging to the WebExtension window ID
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window
                     if(!requestedWindow) return false
+                    self.manipulatedWindows.push(requestedWindow)
 
                     let accountNames = accounts.map(account => account.name)
                     const buttonContainer = addButtonContainerToFolderPane(requestedWindow.window.document)
@@ -64,14 +65,15 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         accountBtn.id = `accountButton_${accountName}`
                         updateButtonText(accountBtn, accountName, numUnread)
                         updateButtonStyle(accountBtn, numUnread)
-                        accountBtn.addEventListener('click', () => selectAccount(this, windowId, accounts, accountName))
+                        accountBtn.addEventListener('mousedown', () => this.showAll())
+                        accountBtn.addEventListener('mouseup', async() => this.showOnly(windowId, accounts, accountName))
                     }
 
                     let showAllBtn = addAccountButton(buttonContainer)
                     showAllBtn.innerText = 'Show all'
                     showAllBtn.addEventListener('click', this.showAll)
                 },
-                async updateUnreadCounts(windowId, enforceRebuild, accounts) {
+                async updateUnreadCounts(windowId, accounts) {
                     if(!windowId) return false
 
                     //get the real window belonging to the WebExtension window ID
@@ -82,7 +84,9 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
                     for(let accountName of accountNames) {
                         if(accountName === 'Local Folders') continue
-                        let accountBtn = requestedWindow.window.document.getElementById(`accountButton_${accountName}`)
+                        const browser = requestedWindow.document.getElementById('mail3PaneTabBrowser1')
+                        const doc = browser.contentWindow.document
+                        let accountBtn = doc.getElementById(`accountButton_${accountName}`)
                         let numUnread = getNumberOfTotalUnreadMails(accounts, accountName)
                         updateButtonText(accountBtn, accountName, numUnread)
                         updateButtonStyle(accountBtn, numUnread)
@@ -96,10 +100,15 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         // This is called when the API shuts down. This API could be invoked multiple times in different contexts
         // and we therefore need to cleanup actions done by this API here.
         for(let manipulated of this.manipulatedWindows) {
-            manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
-            manipulated.requestedWindow.document.getElementById('accountButtonsContainer').remove()
-            manipulated.requestedWindow.document.getElementById('accountButtonsBreakLine').remove()
-            manipulated.requestedWindow.gFolderTreeView._rebuild()
+            const browser = manipulated.document.getElementById('mail3PaneTabBrowser1')
+            const doc = browser.contentWindow.document
+            const folderPanelHeader = doc.getElementById('folderPaneHeaderBar')
+            const row = doc.getElementById('accountFolderFilterHeaderRow')
+            while(row.firstChild) {
+                folderPanelHeader.appendChild(row.firstChild)
+            }
+            doc.getElementById('accountFolderFilterContainer').remove()
+            // TODO: show all accounts
         }
     }
 
@@ -112,29 +121,38 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
     }
 }
 
-async function selectAccount(api, windowId, accounts, accountName) {
-    await api.showAll()
-    await api.showOnly(windowId, true, accounts, accountName)
-    await selectInboxOfAccount()
-}
-
-async function selectInboxOfAccount() {
-    let recentWindow = Services.wm.getMostRecentWindow("mail:3pane")
-    // Select the account. This is useful if the account is collapsed and no inbox is selectable.
-    recentWindow.gFolderTreeView.selection.select(0)
-    // Select the inbox. Will have no effect if the account is collapsed.
-    recentWindow.gFolderTreeView.selection.select(1)
-}
-
 function addButtonContainerToFolderPane(document) {
-    const folderPanelHeader = document.getElementById('folderPaneHeader')
-    const buttonContainer = document.createElement('div')
+    const browser = document.getElementById('mail3PaneTabBrowser1')
+    const doc = browser.contentWindow.document
+    const folderPanelHeader = doc.getElementById('folderPaneHeaderBar')
+    const container = document.createElement('div')
+    container.id = 'accountFolderFilterContainer'
+    container.style.display = 'flex'
+    container.style.flexDirection = 'column'
+    container.style.alignItems = 'center'
+    const headerRow = document.createElement('div')
+    headerRow.id = 'accountFolderFilterHeaderRow'
+    headerRow.style.display = 'flex'
+    headerRow.style.flexDirection = 'row-reverse'
+    headerRow.style.gap = 'var(--folder-tree-header-gap)'
+    headerRow.style.padding = 'var(--folder-tree-header-padding)'
+    headerRow.style.alignItems = 'center'
+
+    // move all standard element to headerRow
+    while(folderPanelHeader.firstChild) {
+        headerRow.appendChild(folderPanelHeader.firstChild)
+    }
+
     const breakLine = document.createElement('br')
-    folderPanelHeader.firstChild.innerHTML = 'Select Account'
-    buttonContainer.id = 'accountButtonsContainer'
     breakLine.id = 'accountButtonsBreakLine'
-    folderPanelHeader.insertBefore(buttonContainer, folderPanelHeader.lastChild)
-    folderPanelHeader.insertBefore(breakLine, buttonContainer)
+    const buttonContainer = document.createElement('div')
+    buttonContainer.id = 'accountButtonsContainer'
+    buttonContainer.style.display = 'flex'
+    buttonContainer.style.flexDirection = 'column'
+    folderPanelHeader.appendChild(container)
+    container.appendChild(headerRow)
+    container.appendChild(breakLine)
+    container.appendChild(buttonContainer)
     return buttonContainer
 }
 

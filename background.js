@@ -27,7 +27,7 @@ async function init() {
     // Handle existing windows.
     let windows = await messenger.windows.getAll({windowTypes: ["normal"]})
     for(let window of windows) {
-        startAddon(window, true)
+        startAddon(window)
     }
 
     // Handle future windows.
@@ -42,17 +42,17 @@ async function init() {
     })
 }
 
-async function startAddon(window, enforceRebuild) {
+async function startAddon(window) {
     if(window.type !== "normal") return
     let accounts = await getNumberOfUnreadMails()
-    await messenger.AccountsFolderFilter.addAccountButtons(window.id, enforceRebuild, accounts)
-    await messenger.AccountsFolderFilter.selectAccount(window.id, accounts, accounts[0].name)
+    await messenger.AccountsFolderFilter.addAccountButtons(window.id, accounts)
+    await messenger.AccountsFolderFilter.showOnly(window.id, accounts, accounts[0].name)
 }
 
 async function updateUnreadCounter(window) {
     if(window.type !== "normal") return
     let accounts = await getNumberOfUnreadMails()
-    await messenger.AccountsFolderFilter.updateUnreadCounts(window.id, true, accounts)
+    await messenger.AccountsFolderFilter.updateUnreadCounts(window.id, accounts)
 }
 
 async function getNumberOfUnreadMails() {
