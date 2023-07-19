@@ -29,7 +29,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     const doc = browser.contentWindow.document
                     const folderTree = doc.getElementById("folderTree")
                     const accountList = folderTree.getElementsByTagName("ul")[0]
-                    const clone = accountList.cloneNode(true)
+                    self.originalAccountList = accountList.cloneNode(true)
                     const accountListItems = accountList.children
 
                     for(let i = accountListItems.length - 1; i >= 0; i--) {
@@ -39,11 +39,13 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     }
                 },
                 async showAll() {
-                    console.log('showAll not implemented')
-                    // for(let manipulated of self.manipulatedWindows) {
-                    //     manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
-                    //     manipulated.requestedWindow.gFolderTreeView._rebuild()
-                    // }
+                    if(!self.originalAccountList) return
+                    for(let manipulated of self.manipulatedWindows) {
+                        manipulated.document.getElementById('appmenu_smartFolders').click()
+                        manipulated.document.getElementById('appmenu_allFolders').click()
+                        manipulated.document.getElementById('appmenu_allFolders').click()
+                        manipulated.document.getElementById('appmenu_smartFolders').click()
+                    }
                 },
                 async addAccountButtons(windowId, enforceRebuild, accounts) {
                     if(!windowId) return false
@@ -121,9 +123,9 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 }
 
 async function selectAccount(api, windowId, accounts, accountName) {
-    await api.showAll()
+    // await api.showAll()
     await api.showOnly(windowId, true, accounts, accountName)
-    await selectInboxOfAccount()
+    // await selectInboxOfAccount()
 }
 
 async function selectInboxOfAccount() {
