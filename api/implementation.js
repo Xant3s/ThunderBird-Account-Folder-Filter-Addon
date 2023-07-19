@@ -14,11 +14,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 
         return {
             AccountsFolderFilter: {
-                async selectAccount(windowId, accounts, accountName) {
-                    if(!windowId) return false
-                    await selectAccount(this, windowId, accounts, accountName)
-                },
-                async showOnly(windowId, enforceRebuild, accounts, accountName) {
+                async showOnly(windowId, accounts, accountName) {
                     if(!windowId) return false
 
                     // get the real window belonging to the WebExtension window ID
@@ -51,7 +47,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         manipulated.document.getElementById('appmenu_smartFolders').click()
                     }
                 },
-                async addAccountButtons(windowId, enforceRebuild, accounts) {
+                async addAccountButtons(windowId, accounts) {
                     if(!windowId) return false
 
                     //get the real window belonging to the WebExtension window ID
@@ -70,14 +66,14 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         updateButtonText(accountBtn, accountName, numUnread)
                         updateButtonStyle(accountBtn, numUnread)
                         accountBtn.addEventListener('mousedown', () => this.showAll())
-                        accountBtn.addEventListener('mouseup', () => selectAccount(this, windowId, accounts, accountName))
+                        accountBtn.addEventListener('mouseup', async() => this.showOnly(windowId, accounts, accountName))
                     }
 
                     let showAllBtn = addAccountButton(buttonContainer)
                     showAllBtn.innerText = 'Show all'
                     showAllBtn.addEventListener('click', this.showAll)
                 },
-                async updateUnreadCounts(windowId, enforceRebuild, accounts) {
+                async updateUnreadCounts(windowId, accounts) {
                     if(!windowId) return false
 
                     //get the real window belonging to the WebExtension window ID
@@ -106,14 +102,12 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         for(let manipulated of this.manipulatedWindows) {
             const browser = manipulated.document.getElementById('mail3PaneTabBrowser1')
             const doc = browser.contentWindow.document
-            // manipulated.requestedWindow.removeEventListener("mapRebuild", manipulated.callback)
             const folderPanelHeader = doc.getElementById('folderPaneHeaderBar')
             const row = doc.getElementById('accountFolderFilterHeaderRow')
             while(row.firstChild) {
                 folderPanelHeader.appendChild(row.firstChild)
             }
             doc.getElementById('accountFolderFilterContainer').remove()
-            // manipulated.requestedWindow.gFolderTreeView._rebuild()
             // TODO: show all accounts
         }
     }
@@ -125,10 +119,6 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
         }
         Services.obs.notifyObservers(null, "startupcache-invalidate", null)
     }
-}
-
-async function selectAccount(api, windowId, accounts, accountName) {
-    await api.showOnly(windowId, true, accounts, accountName)
 }
 
 function addButtonContainerToFolderPane(document) {
