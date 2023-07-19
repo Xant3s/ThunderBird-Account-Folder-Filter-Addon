@@ -36,6 +36,10 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         if(!accountListItems[i].getAttribute("aria-label")?.includes(accountName)) {
                             accountListItems[i].remove()
                         }
+                        else {
+                            // Show account's inbox
+                            accountListItems[i].getElementsByTagName('li')[0].click()
+                        }
                     }
                 },
                 async showAll() {
@@ -124,18 +128,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
 }
 
 async function selectAccount(api, windowId, accounts, accountName) {
-    // await api.showAll()
     await api.showOnly(windowId, true, accounts, accountName)
-    // await selectInboxOfAccount()
-}
-
-async function selectInboxOfAccount() {
-    console.log('selectInboxOfAccount not implemented')
-    let recentWindow = Services.wm.getMostRecentWindow("mail:3pane")
-    // Select the account. This is useful if the account is collapsed and no inbox is selectable.
-    // recentWindow.gFolderTreeView.selection.select(0)
-    // Select the inbox. Will have no effect if the account is collapsed.
-    // recentWindow.gFolderTreeView.selection.select(1)
 }
 
 function addButtonContainerToFolderPane(document) {
