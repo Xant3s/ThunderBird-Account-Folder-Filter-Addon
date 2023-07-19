@@ -65,7 +65,8 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                         accountBtn.id = `accountButton_${accountName}`
                         updateButtonText(accountBtn, accountName, numUnread)
                         updateButtonStyle(accountBtn, numUnread)
-                        accountBtn.addEventListener('click', () => selectAccount(this, windowId, accounts, accountName))
+                        accountBtn.addEventListener('mousedown', () => this.showAll())
+                        accountBtn.addEventListener('mouseup', () => selectAccount(this, windowId, accounts, accountName))
                     }
 
                     let showAllBtn = addAccountButton(buttonContainer)
