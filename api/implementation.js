@@ -25,22 +25,18 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
                     let requestedWindow = context.extension.windowManager.get(windowId, context).window
                     if(!requestedWindow) return false
 
-                    console.log('showOnly not implemented')
-                    // function updateFolderTreeView() {
-                    //     for(let i = this.window.gFolderTreeView._rowMap.length - 1; i >= 0; i--) {
-                    //         if(this.window.gFolderTreeView._rowMap[i]._folder?.prettyName !== accountName) {
-                    //             this.window.gFolderTreeView._rowMap.splice(i, 1)
-                    //         }
-                    //     }
-                    // }
-                    //
-                    // let callback = updateFolderTreeView.bind(requestedWindow)
-                    // requestedWindow.addEventListener("mapRebuild", callback)
-                    // self.manipulatedWindows.push({requestedWindow, callback})
-                    //
-                    // if(enforceRebuild) {
-                    //     requestedWindow.gFolderTreeView._rebuild()
-                    // }
+                    const browser = requestedWindow.document.getElementById('mail3PaneTabBrowser1')
+                    const doc = browser.contentWindow.document
+                    const folderTree = doc.getElementById("folderTree")
+                    const accountList = folderTree.getElementsByTagName("ul")[0]
+                    const clone = accountList.cloneNode(true)
+                    const accountListItems = accountList.children
+
+                    for(let i = accountListItems.length - 1; i >= 0; i--) {
+                        if(!accountListItems[i].getAttribute("aria-label")?.includes(accountName)) {
+                            accountListItems[i].remove()
+                        }
+                    }
                 },
                 async showAll() {
                     console.log('showAll not implemented')
@@ -111,6 +107,7 @@ var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
             }
             doc.getElementById('accountFolderFilterContainer').remove()
             // manipulated.requestedWindow.gFolderTreeView._rebuild()
+            // TODO: show all accounts
         }
     }
 
