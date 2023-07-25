@@ -157,10 +157,37 @@ function addButtonContainerToFolderPane(document) {
 }
 
 function addAccountButton(buttonContainer) {
-    let button = buttonContainer.ownerDocument.createElement('button')
-    button.style.display = 'block'
-    buttonContainer.appendChild(button)
-    return button
+    const buttonDiv = buttonContainer.ownerDocument.createElement('div')
+    buttonDiv.style.display = 'inline-block'
+    buttonDiv.style.padding = '5px 10px'
+    buttonDiv.style.backgroundColor = 'var(--toolbarbutton-hover-background)'
+    buttonDiv.style.marginBottom = '2px'
+    buttonDiv.style.color = 'white'
+    buttonDiv.style.borderRadius = '3px'
+    buttonDiv.style.transition = 'background-color 0.3s ease'
+    const accountName = buttonContainer.ownerDocument.createElement('span')
+    accountName.style.display = 'inline-block'
+    accountName.style.width = '90%'
+    accountName.style.whiteSpace = 'nowrap'
+    accountName.style.overflow = 'hidden'
+    accountName.style.textOverflow = 'ellipsis'
+    const unreadCounter = buttonContainer.ownerDocument.createElement('span')
+    unreadCounter.style.float = 'right'
+    unreadCounter.style.display = 'inline-block'
+    unreadCounter.style.borderRadius = '100%'
+    unreadCounter.style.backgroundColor = 'gray'
+    unreadCounter.style.color = 'white'
+    unreadCounter.style.width = '20px'
+    unreadCounter.style.height = '20px'
+    unreadCounter.style.textAlign = 'center'
+    unreadCounter.style.lineHeight = '20px'
+    unreadCounter.innerText = '?'
+    buttonDiv.addEventListener('mouseover', () => buttonDiv.style.backgroundColor = 'gray')
+    buttonDiv.addEventListener('mouseout', () => buttonDiv.style.backgroundColor = 'var(--toolbarbutton-hover-background)')
+    buttonDiv.appendChild(accountName)
+    buttonDiv.appendChild(unreadCounter)
+    buttonContainer.appendChild(buttonDiv)
+    return buttonDiv
 }
 
 function getNumberOfTotalUnreadMails(accounts, accountName) {
@@ -169,7 +196,8 @@ function getNumberOfTotalUnreadMails(accounts, accountName) {
 }
 
 function updateButtonText(accountBtn, accountName, numUnread) {
-    accountBtn.innerText = `${accountName} (${numUnread})`
+    accountBtn.firstChild.innerText = accountName
+    accountBtn.lastChild.innerText = numUnread
 }
 
 function updateButtonStyle(accountBtn, hasUnreadMessages) {
