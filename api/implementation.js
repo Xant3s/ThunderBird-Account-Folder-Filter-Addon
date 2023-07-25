@@ -161,14 +161,16 @@ function addAccountButton(buttonContainer) {
     buttonDiv.style.display = 'inline-block'
     buttonDiv.style.padding = '5px 10px'
     buttonDiv.style.backgroundColor = 'var(--toolbarbutton-hover-background)'
-    buttonDiv.style.marginBottom = '3px'
+    buttonDiv.style.marginBottom = '2px'
     buttonDiv.style.color = 'white'
     buttonDiv.style.borderRadius = '3px'
     buttonDiv.style.transition = 'background-color 0.3s ease'
-    buttonDiv.style.whiteSpace = 'nowrap'
-    buttonDiv.style.overflow = 'hidden'
-    buttonDiv.style.textOverflow = 'ellipsis'
     const accountName = buttonContainer.ownerDocument.createElement('span')
+    accountName.style.display = 'inline-block'
+    accountName.style.width = '90%'
+    accountName.style.whiteSpace = 'nowrap'
+    accountName.style.overflow = 'hidden'
+    accountName.style.textOverflow = 'ellipsis'
     const unreadCounter = buttonContainer.ownerDocument.createElement('span')
     unreadCounter.style.float = 'right'
     unreadCounter.style.display = 'inline-block'
@@ -179,7 +181,7 @@ function addAccountButton(buttonContainer) {
     unreadCounter.style.height = '20px'
     unreadCounter.style.textAlign = 'center'
     unreadCounter.style.lineHeight = '20px'
-    unreadCounter.innerText = '99'
+    unreadCounter.innerText = '?'
     buttonDiv.addEventListener('mouseover', () => buttonDiv.style.backgroundColor = 'gray')
     buttonDiv.addEventListener('mouseout', () => buttonDiv.style.backgroundColor = 'var(--toolbarbutton-hover-background)')
     buttonDiv.appendChild(accountName)
