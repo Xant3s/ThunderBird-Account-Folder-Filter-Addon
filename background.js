@@ -65,8 +65,10 @@ async function getNumberOfUnreadMails() {
         const inboxFolderInfo = await messenger.folders.getFolderInfo(inbox)
         const unreadMessagesInbox = inboxFolderInfo.unreadMessageCount
         let unreadMessagesTotal = 0
-
+        const foldersToIgnore = ['trash', 'junk', 'bulk', 'spam', 'Junk-E-Mail', 'Junk Email']
+        
         for(const folder of folders[accountIndex]) {
+            if(foldersToIgnore.includes(folder.name.toLowerCase())) continue
             unreadMessagesTotal += await getNumberOfUnreadMailsRecursive(folder)
         }
         accounts.push({
@@ -79,12 +81,14 @@ async function getNumberOfUnreadMails() {
 }
 
 const getNumberOfUnreadMailsRecursive = async (folder) => {
+    const foldersToIgnore = ['trash', 'junk', 'bulk', 'spam', 'junk-e-mail', 'junk email']
     const hasChildFolders = folder.subFolders.length > 0
     const folderInfo = await messenger.folders.getFolderInfo(folder)
     if(!hasChildFolders) {
+        if(foldersToIgnore.includes(folder.name.toLowerCase())) return 0
         return folderInfo.unreadMessageCount
     }
-    let result = folderInfo.unreadMessageCount
+    let result = foldersToIgnore.includes(folder.name.toLowerCase()) ? 0 : folderInfo.unreadMessageCount
     for(const childFolder of folder.subFolders) {
         result += await getNumberOfUnreadMailsRecursive(childFolder)
     }
