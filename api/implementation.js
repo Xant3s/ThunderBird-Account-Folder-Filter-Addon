@@ -129,6 +129,7 @@ function addButtonContainerToFolderPane(document) {
     container.style.display = 'flex'
     container.style.flexDirection = 'column'
     container.style.alignItems = 'center'
+    container.style.width = '100%'
     const headerRow = document.createElement('div')
     headerRow.id = 'accountFolderFilterHeaderRow'
     headerRow.style.display = 'flex'
@@ -148,6 +149,7 @@ function addButtonContainerToFolderPane(document) {
     buttonContainer.id = 'accountButtonsContainer'
     buttonContainer.style.display = 'flex'
     buttonContainer.style.flexDirection = 'column'
+    buttonContainer.style.width = '100%'
     folderPanelHeader.appendChild(container)
     container.appendChild(headerRow)
     container.appendChild(breakLine)
@@ -160,7 +162,7 @@ function addAccountButton(buttonContainer) {
     buttonDiv.style.display = 'inline-block'
     buttonDiv.style.padding = '5px 10px'
     buttonDiv.style.backgroundColor = 'var(--toolbarbutton-hover-background)'
-    buttonDiv.style.marginBottom = '2px'
+    buttonDiv.style.marginTop = '2px'
     buttonDiv.style.color = 'white'
     buttonDiv.style.borderRadius = '3px'
     buttonDiv.style.transition = 'background-color 0.3s ease'
