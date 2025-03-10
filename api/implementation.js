@@ -1,6 +1,6 @@
-var {ExtensionCommon} = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm")
-var {MailUtils} = ChromeUtils.import("resource:///modules/MailUtils.jsm")
-var {MailServices} = ChromeUtils.import("resource:///modules/MailServices.jsm")
+const {ExtensionCommon} = ChromeUtils.importESModule("resource://gre/modules/ExtensionCommon.sys.mjs")
+const {MailUtils} = ChromeUtils.importESModule("resource:///modules/MailUtils.sys.mjs")
+const {MailServices} = ChromeUtils.importESModule("resource:///modules/MailServices.sys.mjs")
 
 
 var AccountsFolderFilter = class extends ExtensionCommon.ExtensionAPI {
