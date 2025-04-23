@@ -163,7 +163,7 @@ function addAccountButton(buttonContainer) {
     buttonDiv.style.padding = '5px 10px'
     buttonDiv.style.backgroundColor = 'var(--toolbarbutton-hover-background)'
     buttonDiv.style.marginTop = '2px'
-    buttonDiv.style.color = 'white'
+    buttonDiv.style.color = 'primary'
     buttonDiv.style.borderRadius = '3px'
     buttonDiv.style.transition = 'background-color 0.3s ease'
     const accountName = buttonContainer.ownerDocument.createElement('span')
