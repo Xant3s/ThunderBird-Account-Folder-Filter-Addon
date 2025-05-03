@@ -2,13 +2,13 @@
     "manifest_version": 2,
     "name": "Accounts Folder Filter",
     "description": "This addon allows users to filter folders by account. Only folder that belong to the selected account will be displayed. The user can switch the active account using buttons that are injected into the folder pane toolbar.",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "author": "Samuel Truman",
     "applications": {
         "gecko": {
             "id": "accountfolderfilter@samueltruman.com",
             "strict_min_version": "91.0",
-            "strict_max_version": "137.*"
+            "strict_max_version": "138.*"
         }
     },
     "permissions": [
